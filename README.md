@@ -1,5 +1,7 @@
 # Offer Check
 
+© 2026 Metis AI Ltd. All rights reserved.
+
 A simple web app that helps job seekers:
 
 1. Work out the questions and data points they need to clarify with a recruiter.
@@ -32,7 +34,10 @@ Commute time is shown in hours per year but isn't given a cash value.
 public/                The deployed site
   index.html           The whole app: markup, styles and script
   guide.html           How-to guide with the embedded walkthrough video
-  assets/              Walkthrough video, poster frame and captions
+  terms.html           Terms of use
+  privacy.html         Privacy notice
+  404.html             Not-found page
+  assets/              Shared styles, fonts, icons, share image, walkthrough video
 wrangler.jsonc         Cloudflare Workers config
 README.md    This file
 BACKLOG.md   Ideas and next steps
@@ -40,7 +45,7 @@ BACKLOG.md   Ideas and next steps
 
 ## Licence
 
-Private project. Add a licence before making the repo public.
+Proprietary. Copyright (c) 2026 Metis AI Ltd. All rights reserved. See `LICENSE`.
 
 ## Deploy (Cloudflare Workers)
 

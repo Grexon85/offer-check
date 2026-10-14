@@ -5,8 +5,20 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Offer Check Guide</title>
 <meta name="description" content="How to fill in Offer Check: your current package, the recruiter questions, the offer, your decision lines and the verdict.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@500;700&family=Source+Sans+3:wght@400;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<meta name="author" content="Metis AI Ltd">
+<meta name="copyright" content="&copy; 2026 Metis AI Ltd. All rights reserved.">
+<meta name="theme-color" content="#0f6b5c">
+<link rel="canonical" href="https://offer-check.net/guide.html">
+<link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Offer Check">
+<meta property="og:title" content="How to use Offer Check">
+<meta property="og:description" content="How to fill in Offer Check: your current package, the recruiter questions, the offer, your decision lines and the verdict.">
+<meta property="og:url" content="https://offer-check.net/guide.html">
+<meta property="og:image" content="https://offer-check.net/assets/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="assets/site.css">
 <style>
 /* Layout: a field manual. Video first, then a sticky step index on the left and the detailed steps on the right; one column on phones. */
 :root{
@@ -33,11 +45,6 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font
 .wrap{max-width:1120px;margin:0 auto;display:grid;gap:32px}
 a{color:var(--accent)}
 a:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
-.top{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px}
-.brand{font-family:var(--display);font-weight:700;font-size:20px;color:var(--ink);text-decoration:none}
-.brand span{color:var(--accent)}
-.btn{display:inline-block;font:600 15px var(--body);background:var(--accent);color:var(--surface);padding:9px 16px;border-radius:7px;text-decoration:none}
-.btn:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
 .hero{display:grid;gap:12px;max-width:68ch}
 h1{font-family:var(--display);font-weight:700;font-size:clamp(32px,5vw,48px);line-height:1.08;margin:0;letter-spacing:-.01em;text-wrap:balance}
 .lead{margin:0;color:var(--muted);font-size:19px}
@@ -83,15 +90,14 @@ code,.num{font-family:var(--mono);font-size:.92em}
 .v p{margin:0;color:var(--ink);font-size:15px}
 .v-bad{background:var(--bad-bg);color:var(--bad)}.v-warn{background:var(--warn-bg);color:var(--warn)}.v-good{background:var(--good-bg);color:var(--good)}
 pre{margin:0;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;overflow-x:auto;font:14px/1.7 var(--mono)}
-footer{border-top:1px solid var(--line);padding-top:20px;color:var(--muted);font-size:15px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
 </style>
 </head>
 <body>
 <div class="wrap">
 
-<div class="top">
-  <a class="brand" href="index.html">Offer <span>Check</span></a>
-  <a class="btn" href="index.html">Open Offer Check</a>
+<div class="site-bar">
+  <a class="site-brand" href="index.html" aria-label="Offer Check home"><svg viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#0f6b5c"/><path d="M14 42h36" stroke="#9fd9cc" stroke-width="4" stroke-linecap="round"/><path d="M19 29l8 8 18-19" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg><span><span class="wm">Offer <span>Check</span></span><span class="by">by Metis AI Ltd</span></span></a>
+  <nav class="site-nav" aria-label="Main"><a href="index.html">Compare offers</a><a href="guide.html" aria-current="page">Guide</a></nav>
 </div>
 
 <div class="hero">
@@ -252,9 +258,12 @@ Strong yes  = today's total × (1 + strong-yes uplift)</pre>
 </main>
 </div>
 
-<footer>
-  <span>Offer Check helps you compare packages. It isn't financial advice.</span>
-  <a href="index.html">Back to Offer Check</a>
+<footer class="site-footer">
+  <div class="row">
+    <span class="copy">&copy; 2026 Metis AI Ltd. All rights reserved.</span>
+    <nav aria-label="Footer"><a href="index.html">Compare offers</a><a href="guide.html">Guide</a><a href="terms.html">Terms of use</a><a href="privacy.html">Privacy</a></nav>
+  </div>
+  <p class="small">Offer Check&trade; is a trademark of Metis AI Ltd. The tool, text, design, code and video on this site are protected by copyright and may not be copied, reproduced or redistributed without written permission. Offer Check helps you compare job offers; it isn't financial, tax or legal advice.</p>
 </footer>
 </div>
 </body>

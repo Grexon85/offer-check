@@ -5,9 +5,21 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <style>[hidden]{display:none!important}body{margin:0}img{max-width:100%}</style>
 <title>Offer Check</title>
-<meta name="claude:viewport-fit-sides" content="cover">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@500;700&family=Source+Sans+3:wght@400;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<meta name="description" content="Compare a job offer with your current package: pension, bonus, benefits, holiday and commute. Know your numbers before you say yes.">
+<meta name="author" content="Metis AI Ltd">
+<meta name="copyright" content="&copy; 2026 Metis AI Ltd. All rights reserved.">
+<meta name="theme-color" content="#0f6b5c">
+<link rel="canonical" href="https://offer-check.net/">
+<link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Offer Check">
+<meta property="og:title" content="Offer Check: is that job offer really better?">
+<meta property="og:description" content="Compare a job offer with your current package: pension, bonus, benefits, holiday and commute. Know your numbers before you say yes.">
+<meta property="og:url" content="https://offer-check.net/">
+<meta property="og:image" content="https://offer-check.net/assets/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="assets/site.css">
 <style>
 /* Layout: a working ledger. Inputs on the left (current vs offer side by side), a sticky verdict panel on the right; stacks on phones. */
 :root{
@@ -86,8 +98,12 @@ td{font-family:var(--mono)}
 </head>
 <body>
 <div class="wrap">
+<div class="site-bar">
+  <a class="site-brand" href="index.html" aria-label="Offer Check home"><svg viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#0f6b5c"/><path d="M14 42h36" stroke="#9fd9cc" stroke-width="4" stroke-linecap="round"/><path d="M19 29l8 8 18-19" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg><span><span class="wm">Offer <span>Check</span></span><span class="by">by Metis AI Ltd</span></span></a>
+  <nav class="site-nav" aria-label="Main"><a href="index.html" aria-current="page">Compare offers</a><a href="guide.html">Guide</a></nav>
+</div>
 <header>
-  <h1>Offer Check</h1>
+  <h1>Is that job offer really better?</h1>
   <p>Work out what to ask a recruiter, capture their answers, and see whether the offer actually beats the package you have today. New here? <a class="guide-link" href="guide.html">Read the guide and watch the 70-second walkthrough</a>.</p>
   <div class="bar">
     <span class="tag" id="sampleTag">Sample figures — replace with yours</span>
@@ -173,6 +189,13 @@ td{font-family:var(--mono)}
   </div>
 </aside>
 </div>
+<footer class="site-footer">
+  <div class="row">
+    <span class="copy">&copy; 2026 Metis AI Ltd. All rights reserved.</span>
+    <nav aria-label="Footer"><a href="index.html">Compare offers</a><a href="guide.html">Guide</a><a href="terms.html">Terms of use</a><a href="privacy.html">Privacy</a></nav>
+  </div>
+  <p class="small">Offer Check&trade; is a trademark of Metis AI Ltd. The tool, text, design, code and video on this site are protected by copyright and may not be copied, reproduced or redistributed without written permission. Offer Check helps you compare job offers; it isn't financial, tax or legal advice.</p>
+</footer>
 </div>
 
 <script>
