@@ -10,7 +10,7 @@ It's a single static HTML file with no build step and no backend. Each user's fi
 
 ## Run it
 
-Open `index.html` in a browser. That's it.
+Open `public/index.html` in a browser. That's it.
 
 To host it, any static host works: GitHub Pages, Cloudflare Pages, Netlify or Vercel.
 
@@ -29,9 +29,11 @@ Commute time is shown in hours per year but isn't given a cash value.
 ## Project structure
 
 ```
-index.html   The whole app: markup, styles and script
-guide.html   How-to guide with the embedded walkthrough video
-assets/      Walkthrough video, poster frame and captions
+public/                The deployed site
+  index.html           The whole app: markup, styles and script
+  guide.html           How-to guide with the embedded walkthrough video
+  assets/              Walkthrough video, poster frame and captions
+wrangler.jsonc         Cloudflare Workers config
 README.md    This file
 BACKLOG.md   Ideas and next steps
 ```
@@ -42,7 +44,7 @@ Private project. Add a licence before making the repo public.
 
 ## Deploy (Cloudflare Workers)
 
-The site deploys as a static-assets Worker named `offer-check`, configured in `wrangler.jsonc`. `.assetsignore` keeps repo files like this README off the site.
+The site deploys as a static-assets Worker named `offer-check`, configured in `wrangler.jsonc`. Only the `public/` folder is published.
 
 **One-off deploy from your machine:**
 
@@ -51,4 +53,4 @@ npx wrangler login     # first time only
 npx wrangler deploy
 ```
 
-**Automatic deploys (recommended):** in the Cloudflare dashboard, open the `offer-check` Worker → Settings → Builds → Connect to Git, and pick `Grexon85/offer-check`, branch `main`. Every push to `main` then deploys itself.
+**Automatic deploys (recommended):** in the Cloudflare dashboard, open the `offer-check` Worker → Settings → Builds → Connect to Git, and pick `Grexon85/offer-check`, branch `main`. Set the **deploy command** to `npx wrangler deploy` (not `npx wrangler versions upload`, which uploads a version without sending traffic to it). Every push to `main` then deploys itself.
