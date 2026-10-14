@@ -19,4 +19,5 @@ Ordered roughly by value. Move items to "Done" as they ship.
 
 ## Done
 
+- [x] Guide page (`guide.html`) with narrated walkthrough video, field-by-field instructions and verdict guide; linked from the app header.
 - [x] v1: current vs offer inputs, 12 recruiter questions with notes, decision lines, base-needed table, copyable summary.

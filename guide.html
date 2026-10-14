@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Offer Check Guide</title>
+<meta name="description" content="How to fill in Offer Check: your current package, the recruiter questions, the offer, your decision lines and the verdict.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@500;700&family=Source+Sans+3:wght@400;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: a field manual. Video first, then a sticky step index on the left and the detailed steps on the right; one column on phones. */
+:root{
+  --bg:#f3f5f4; --surface:#ffffff; --ink:#17201d; --muted:#5b6a65; --line:#d6dedb;
+  --accent:#0f6b5c; --accent-soft:#dcefea;
+  --good:#1d7a3e; --warn:#a86a00; --bad:#b3261e; --good-bg:#e1f3e6; --warn-bg:#fbf0d9; --bad-bg:#fbe3e0;
+  --display:"Familjen Grotesk","Helvetica Neue",Arial,sans-serif;
+  --body:"Source Sans 3","Segoe UI",system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#101614; --surface:#18201e; --ink:#e6eeeb; --muted:#9aaba5; --line:#2c3835;
+  --accent:#4fc2ab; --accent-soft:#183a33;
+  --good:#6fd18f; --warn:#e8b252; --bad:#f08a80; --good-bg:#16301f; --warn-bg:#352a12; --bad-bg:#3a1a17; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#101614; --surface:#18201e; --ink:#e6eeeb; --muted:#9aaba5; --line:#2c3835;
+  --accent:#4fc2ab; --accent-soft:#183a33;
+  --good:#6fd18f; --warn:#e8b252; --bad:#f08a80; --good-bg:#16301f; --warn-bg:#352a12; --bad-bg:#3a1a17; color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.6;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:24px 64px}
+.wrap{max-width:1120px;margin:0 auto;display:grid;gap:32px}
+a{color:var(--accent)}
+a:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+.top{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px}
+.brand{font-family:var(--display);font-weight:700;font-size:20px;color:var(--ink);text-decoration:none}
+.brand span{color:var(--accent)}
+.btn{display:inline-block;font:600 15px var(--body);background:var(--accent);color:var(--surface);padding:9px 16px;border-radius:7px;text-decoration:none}
+.btn:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.hero{display:grid;gap:12px;max-width:68ch}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(32px,5vw,48px);line-height:1.08;margin:0;letter-spacing:-.01em;text-wrap:balance}
+.lead{margin:0;color:var(--muted);font-size:19px}
+.video{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px;display:grid;gap:10px}
+.video video{width:100%;max-width:100%;aspect-ratio:16/9;border-radius:8px;background:#000;display:block}
+.video p{margin:0 4px;font-size:14px;color:var(--muted)}
+.prep{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px 22px;display:grid;gap:10px}
+.prep h2{margin:0;font-family:var(--display);font-size:22px}
+.prep ul{margin:0;padding-left:20px;display:grid;gap:4px}
+.layout{display:grid;grid-template-columns:220px minmax(0,1fr);gap:40px;align-items:start}
+@media (max-width:820px){.layout{grid-template-columns:minmax(0,1fr)}nav.toc{position:static!important}}
+nav.toc{position:sticky;top:calc(env(safe-area-inset-top,0px) + 16px);display:grid;gap:4px;font-size:15px}
+nav.toc .label{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600;margin-bottom:4px}
+nav.toc a{display:flex;gap:10px;align-items:center;text-decoration:none;color:var(--ink);padding:6px 8px;border-radius:6px}
+nav.toc a:hover{background:var(--accent-soft)}
+nav.toc i{font:600 12px var(--mono);font-style:normal;width:24px;height:24px;border-radius:50%;border:1.5px solid var(--accent);color:var(--accent);display:grid;place-items:center;flex:none}
+main{display:grid;gap:48px;min-width:0}
+section{display:grid;gap:16px;scroll-margin-top:16px;min-width:0}
+.eyebrow{font:600 13px var(--mono);color:var(--accent);letter-spacing:.04em}
+h2.step{font-family:var(--display);font-size:clamp(26px,3.4vw,32px);line-height:1.15;margin:0;text-wrap:balance}
+section > p{margin:0;max-width:68ch}
+h3{font-family:var(--display);font-size:19px;margin:8px 0 0}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:640px;font-size:15px}
+th,td{text-align:left;vertical-align:top;padding:10px 14px;border-bottom:1px solid var(--line)}
+tr:last-child td{border-bottom:0}
+th{font-size:12px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:600;background:var(--bg)}
+td:first-child{font-weight:600;white-space:nowrap}
+code,.num{font-family:var(--mono);font-size:.92em}
+.tip{border-left:3px solid var(--accent);background:var(--accent-soft);padding:12px 16px;border-radius:0 8px 8px 0;max-width:68ch}
+.tip strong{color:var(--accent)}
+.warn{border-left-color:var(--warn);background:var(--warn-bg)}
+.warn strong{color:var(--warn)}
+.qgroups{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.qg{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px 18px;display:grid;gap:8px;align-content:start;min-width:0}
+.qg h3{margin:0;color:var(--accent);font-size:17px}
+.qg ol{margin:0;padding-left:20px;display:grid;gap:8px;font-size:15px}
+.qg li span{display:block;color:var(--muted);font-size:14px}
+.verdicts{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.v{border-radius:10px;padding:14px 16px;display:grid;gap:4px;align-content:start}
+.v b{font-family:var(--display);font-size:20px}
+.v small{font-family:var(--mono);font-size:13px;opacity:.9}
+.v p{margin:0;color:var(--ink);font-size:15px}
+.v-bad{background:var(--bad-bg);color:var(--bad)}.v-warn{background:var(--warn-bg);color:var(--warn)}.v-good{background:var(--good-bg);color:var(--good)}
+pre{margin:0;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;overflow-x:auto;font:14px/1.7 var(--mono)}
+footer{border-top:1px solid var(--line);padding-top:20px;color:var(--muted);font-size:15px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="top">
+  <a class="brand" href="index.html">Offer <span>Check</span></a>
+  <a class="btn" href="index.html">Open Offer Check</a>
+</div>
+
+<div class="hero">
+  <h1>How to use Offer Check</h1>
+  <p class="lead">Fill it in five steps, in this order: your current package, the recruiter questions, the offer, your decision lines, then the verdict. It takes about 10 minutes once you have your paperwork to hand.</p>
+</div>
+
+<div class="video">
+  <video controls preload="metadata" playsinline poster="assets/walkthrough-poster.jpg">
+    <source src="assets/walkthrough.mp4" type="video/mp4">
+    <track kind="captions" src="assets/walkthrough.en.vtt" srclang="en" label="English">
+    Your browser can't play this video. <a href="assets/walkthrough.mp4">Open the walkthrough video</a>.
+  </video>
+  <p>70-second walkthrough, with sound and on-screen captions. The figures shown are an example, not real data.</p>
+</div>
+
+<div class="prep">
+  <h2>Have these ready before you start</h2>
+  <ul>
+    <li>A recent payslip or your contract, for base salary and allowances.</li>
+    <li>Your pension statement or benefits portal, for your employer's contribution.</li>
+    <li>Your bonus letters for the last two or three years.</li>
+    <li>Your benefits summary, for private medical and holiday.</li>
+    <li>A rough idea of what your commute costs each week.</li>
+  </ul>
+</div>
+
+<div class="layout">
+<nav class="toc" aria-label="Steps">
+  <span class="label">Steps</span>
+  <a href="#today"><i>1</i>Your package</a>
+  <a href="#recruiter"><i>2</i>Recruiter questions</a>
+  <a href="#offer"><i>3</i>The offer</a>
+  <a href="#lines"><i>4</i>Decision lines</a>
+  <a href="#verdict"><i>5</i>The verdict</a>
+  <a href="#maths" style="margin-top:8px">How it's calculated</a>
+</nav>
+
+<main>
+
+<section id="today" aria-labelledby="h-today">
+  <span class="eyebrow">STEP 1</span>
+  <h2 class="step" id="h-today">Enter the package you have today</h2>
+  <p>Start with the <strong>Current</strong> column and work from top to bottom. This sets the baseline every offer is measured against, so be accurate. If you guess generously here, every offer will look worse than it is, and the other way round.</p>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Field</th><th>What to enter</th><th>Where to find it</th><th>Watch out for</th></tr></thead>
+      <tbody>
+        <tr><td>Base salary</td><td>Annual salary before tax.</td><td>Payslip × 12, or your contract.</td><td>Leave out overtime and shift pay unless it's guaranteed.</td></tr>
+        <tr><td>Employer pension %</td><td>Your employer's contribution only, as a % of salary.</td><td>Pension statement or benefits portal.</td><td>Don't include your own contribution. If it's matched, enter the rate you actually receive.</td></tr>
+        <tr><td>Bonus %</td><td>Your typical bonus as a % of base.</td><td>Bonus letters; average the last two or three years.</td><td>Use what was actually paid, not the target.</td></tr>
+        <tr><td>Bonus you can count on</td><td><em>All of it</em>, <em>Half</em> or <em>None</em>.</td><td>Your own payout history.</td><td>Choose <em>All</em> only if it has paid reliably for several years.</td></tr>
+        <tr><td>Allowances</td><td>Cash allowances per year: car, travel, flexible benefits.</td><td>Payslip or benefits summary.</td><td>Only count cash or benefits you'd otherwise pay for yourself.</td></tr>
+        <tr><td>Private medical</td><td>What similar cover would cost you to buy yourself, per year.</td><td>Benefits summary, or a quick insurer quote.</td><td>Enter 0 if you wouldn't buy it anyway.</td></tr>
+        <tr><td>Holiday days</td><td>Contractual days, excluding bank holidays.</td><td>Contract or HR system.</td><td>Don't include days you buy or carry over.</td></tr>
+        <tr><td>Commute cost / year</td><td>Fuel, parking and tickets for a year.</td><td><span class="num">daily cost × office days × 46 weeks</span></td><td>Use your real office pattern, not the policy.</td></tr>
+        <tr><td>Commute hours / week</td><td>Total round-trip travel time per week.</td><td><span class="num">round trip × office days</span></td><td>Shown as time saved or lost; it isn't converted to money.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="recruiter" aria-labelledby="h-recruiter">
+  <span class="eyebrow">STEP 2</span>
+  <h2 class="step" id="h-recruiter">Ask the recruiter before you touch the offer</h2>
+  <p>Most offers look better or worse than they are because a few answers are missing. Work through these 12 questions, tick each one off and note what the recruiter says. Their answers feed straight into Step 3.</p>
+  <div class="qgroups">
+    <div class="qg"><h3>The role</h3><ol>
+      <li>Who is the employer, and is the role in-house or placed with a client?<span>Client placements can end with the contract.</span></li>
+      <li>Where is it based, and how many office days?<span>Drives your commute fields.</span></li>
+      <li>Why is the role open: new, or a replacement?<span>If a replacement, ask why the last person left.</span></li>
+      <li>How many people would I manage?<span>Tells you whether the level and pay match the title.</span></li>
+      <li>What does success look like at 6 and 12 months?<span>Vague answers usually mean an undefined role.</span></li>
+      <li>What is the progression path?<span>Shows whether this moves your career forward.</span></li>
+    </ol></div>
+    <div class="qg"><h3>The money</h3><ol start="7">
+      <li>What is the salary band?<span>Get this before you name any number.</span></li>
+      <li>What is the employer pension, and is it matched?<span>A 10% vs 3% pension is a 7% swing in real pay.</span></li>
+      <li>What is the bonus target, and what has it actually paid?<span>Decides "bonus you can count on".</span></li>
+      <li>Is the band flexible for specialist experience?<span>Shows room to negotiate.</span></li>
+    </ol></div>
+    <div class="qg"><h3>The safety net</h3><ol start="11">
+      <li>Holiday, sick pay and private medical terms?<span>Often weaker outside large employers.</span></li>
+      <li>Notice period, and redundancy or redeployment terms?<span>Matters most for client-placed roles.</span></li>
+    </ol></div>
+  </div>
+  <div class="tip"><strong>Tip:</strong> If you're pushed for your expectations before you have the band, say you'd like to understand the full package first. Once you've named a number, it's hard to move up from it.</div>
+</section>
+
+<section id="offer" aria-labelledby="h-offer">
+  <span class="eyebrow">STEP 3</span>
+  <h2 class="step" id="h-offer">Fill in the offer, in the same order</h2>
+  <p>Now complete the <strong>Offer</strong> column using the recruiter's answers. Go top to bottom, exactly as you did for your current package, so you compare like with like.</p>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Offer field</th><th>Comes from question</th><th>How to enter it</th></tr></thead>
+      <tbody>
+        <tr><td>Base salary</td><td>7, 10</td><td>The figure actually offered. If you only have a band, test the bottom of it first.</td></tr>
+        <tr><td>Employer pension %</td><td>8</td><td>The employer's contribution at the level you'd actually pay in.</td></tr>
+        <tr><td>Bonus %</td><td>9</td><td>The stated target.</td></tr>
+        <tr><td>Bonus you can count on</td><td>9</td><td><em>Half</em> or <em>None</em> unless they can show what it actually paid recently.</td></tr>
+        <tr><td>Allowances, medical, holiday</td><td>11</td><td>The same way you entered your own.</td></tr>
+        <tr><td>Commute cost and hours</td><td>2</td><td>Based on their office-day expectation, not what you hope to negotiate.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="tip warn"><strong>Most common mistake:</strong> counting a target bonus in full. A target is not a promise. Unless they show you real payouts, choose <em>Half</em>.</div>
+</section>
+
+<section id="lines" aria-labelledby="h-lines">
+  <span class="eyebrow">STEP 4</span>
+  <h2 class="step" id="h-lines">Set your decision lines</h2>
+  <p>Decide how much better an offer has to be before moving is worth the disruption. Do this before you look at the verdict, so the result doesn't sway you.</p>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Line</th><th>Default</th><th>Raise it when</th></tr></thead>
+      <tbody>
+        <tr><td>"Consider" uplift</td><td class="num">10%</td><td>The employer is smaller, newer, a consultancy, or the role is placed with a client.</td></tr>
+        <tr><td>"Strong yes" uplift</td><td class="num">20%</td><td>You'd lose good redundancy terms, long service, or a role you're secure in.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>Only lower them if the move is clearly a career step you want for its own sake, and be honest with yourself when you do.</p>
+</section>
+
+<section id="verdict" aria-labelledby="h-verdict">
+  <span class="eyebrow">STEP 5</span>
+  <h2 class="step" id="h-verdict">Read the verdict</h2>
+  <p>The result panel compares the offer's total value with yours and places it on the scale.</p>
+  <div class="verdicts">
+    <div class="v v-bad"><b>Walk away</b><small>below today's value</small><p>The offer is worth less than what you have. Only negotiate if the gap is small.</p></div>
+    <div class="v v-warn"><b>Break-even</b><small>0% to your "consider" line</small><p>Same money, more risk. Move only for a clear career step, or negotiate up.</p></div>
+    <div class="v v-good"><b>Consider</b><small>"consider" to "strong yes"</small><p>Fair reward for the move. Weigh up the role itself.</p></div>
+    <div class="v v-good"><b>Strong yes</b><small>above "strong yes"</small><p>A clear financial step up.</p></div>
+  </div>
+  <h3>Use "Base salary you need" to negotiate</h3>
+  <p>This table shows the base salary that would lift the offer to each line, given its pension and bonus. If the verdict is break-even, the "Consider" figure is your counter-offer. Then use <strong>Copy summary</strong> to keep your numbers and the recruiter's answers together.</p>
+</section>
+
+<section id="maths" aria-labelledby="h-maths">
+  <span class="eyebrow">REFERENCE</span>
+  <h2 class="step" id="h-maths">How it's calculated</h2>
+<pre>Total value = base salary
+            + employer pension
+            + bonus × the share you can count on
+            + allowances + private medical
+
+Offer total also adds:
+            + holiday difference × (offer base ÷ 260)
+            + commute cost saved (or minus extra cost)
+
+Break-even  = today's total value
+Consider    = today's total × (1 + consider uplift)
+Strong yes  = today's total × (1 + strong-yes uplift)</pre>
+  <p>Everything you enter stays in your own browser. Nothing is sent anywhere.</p>
+</section>
+
+</main>
+</div>
+
+<footer>
+  <span>Offer Check helps you compare packages. It isn't financial advice.</span>
+  <a href="index.html">Back to Offer Check</a>
+</footer>
+</div>
+</body>
+</html>

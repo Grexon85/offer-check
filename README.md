@@ -30,6 +30,8 @@ Commute time is shown in hours per year but isn't given a cash value.
 
 ```
 index.html   The whole app: markup, styles and script
+guide.html   How-to guide with the embedded walkthrough video
+assets/      Walkthrough video, poster frame and captions
 README.md    This file
 BACKLOG.md   Ideas and next steps
 ```

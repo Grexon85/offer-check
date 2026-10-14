@@ -32,6 +32,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15p
 .wrap{max-width:1180px;margin:0 auto;display:grid;gap:24px}
 header h1{font-family:var(--display);font-weight:700;font-size:clamp(28px,4vw,40px);margin:0;letter-spacing:-.01em;text-wrap:balance}
 header p{margin:6px 0 0;color:var(--muted);max-width:62ch}
+.guide-link{color:var(--accent);font-weight:600}
 .bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:14px}
 .tag{font-family:var(--mono);font-size:12px;background:var(--warn-bg);color:var(--warn);padding:3px 8px;border-radius:4px}
 button{font:600 14px var(--body);border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:7px 12px;border-radius:6px;cursor:pointer}
@@ -87,7 +88,7 @@ td{font-family:var(--mono)}
 <div class="wrap">
 <header>
   <h1>Offer Check</h1>
-  <p>Work out what to ask a recruiter, capture their answers, and see whether the offer actually beats the package you have today.</p>
+  <p>Work out what to ask a recruiter, capture their answers, and see whether the offer actually beats the package you have today. New here? <a class="guide-link" href="guide.html">Read the guide and watch the 70-second walkthrough</a>.</p>
   <div class="bar">
     <span class="tag" id="sampleTag">Sample figures — replace with yours</span>
     <button id="clearBtn">Clear all</button>
