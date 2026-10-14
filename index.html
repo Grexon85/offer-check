@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>[hidden]{display:none!important}body{margin:0}img{max-width:100%}</style>
+<title>Offer Check</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@500;700&family=Source+Sans+3:wght@400;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: a working ledger. Inputs on the left (current vs offer side by side), a sticky verdict panel on the right; stacks on phones. */
+:root{
+  --bg:#f3f5f4; --surface:#ffffff; --ink:#17201d; --muted:#5b6a65; --line:#d6dedb;
+  --accent:#0f6b5c; --accent-soft:#dcefea;
+  --good:#1d7a3e; --warn:#a86a00; --bad:#b3261e; --good-bg:#e1f3e6; --warn-bg:#fbf0d9; --bad-bg:#fbe3e0;
+  --display:"Familjen Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --body:"Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#101614; --surface:#18201e; --ink:#e6eeeb; --muted:#9aaba5; --line:#2c3835;
+  --accent:#4fc2ab; --accent-soft:#183a33;
+  --good:#6fd18f; --warn:#e8b252; --bad:#f08a80; --good-bg:#16301f; --warn-bg:#352a12; --bad-bg:#3a1a17; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#101614; --surface:#18201e; --ink:#e6eeeb; --muted:#9aaba5; --line:#2c3835;
+  --accent:#4fc2ab; --accent-soft:#183a33;
+  --good:#6fd18f; --warn:#e8b252; --bad:#f08a80; --good-bg:#16301f; --warn-bg:#352a12; --bad-bg:#3a1a17; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:24px 48px}
+.wrap{max-width:1180px;margin:0 auto;display:grid;gap:24px}
+header h1{font-family:var(--display);font-weight:700;font-size:clamp(28px,4vw,40px);margin:0;letter-spacing:-.01em;text-wrap:balance}
+header p{margin:6px 0 0;color:var(--muted);max-width:62ch}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:14px}
+.tag{font-family:var(--mono);font-size:12px;background:var(--warn-bg);color:var(--warn);padding:3px 8px;border-radius:4px}
+button{font:600 14px var(--body);border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:7px 12px;border-radius:6px;cursor:pointer}
+button.primary{background:var(--accent);border-color:var(--accent);color:var(--surface)}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:24px;align-items:start}
+@media (max-width:900px){.grid{grid-template-columns:minmax(0,1fr)}}
+section.step{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:20px;display:grid;gap:14px;min-width:0}
+.step h2{font-family:var(--display);font-size:20px;margin:0;display:flex;gap:10px;align-items:baseline}
+.step h2 .n{font-family:var(--mono);font-size:13px;color:var(--accent)}
+.step > p{margin:0;color:var(--muted)}
+.cols{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) minmax(0,1fr);gap:8px 12px;align-items:center}
+.cols .h{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600}
+.cols label{font-weight:600}
+.cols label small{display:block;font-weight:400;color:var(--muted);font-size:13px}
+input,select,textarea{font:15px var(--body);color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:7px 9px;width:100%;min-width:0}
+input[type=number]{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.money{position:relative}.money span{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--muted);font-family:var(--mono)}.money input{padding-left:22px}
+@media (max-width:560px){.cols{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.cols label{grid-column:1/-1;margin-top:6px}.cols .h.first{display:none}}
+.qs{display:grid;gap:10px}
+.q{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 10px;padding:10px 0;border-top:1px solid var(--line)}
+.q:first-child{border-top:0}
+.q input[type=checkbox]{width:18px;height:18px;margin-top:3px;accent-color:var(--accent)}
+.q .t{font-weight:600}
+.q .why{color:var(--muted);font-size:14px}
+.q textarea{grid-column:2;min-height:38px;resize:vertical;font-size:14px}
+.group{font-family:var(--display);font-size:15px;margin:8px 0 0;color:var(--accent)}
+aside{position:sticky;top:calc(env(safe-area-inset-top,0px) + 16px);display:grid;gap:14px;min-width:0}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px;display:grid;gap:12px}
+.verdict{border-radius:8px;padding:12px 14px;font-weight:600}
+.verdict .big{font-family:var(--display);font-size:24px;display:block}
+.v-bad{background:var(--bad-bg);color:var(--bad)}.v-warn{background:var(--warn-bg);color:var(--warn)}.v-good{background:var(--good-bg);color:var(--good)}
+.kv{display:grid;grid-template-columns:1fr auto;gap:4px 12px;font-size:14px}
+.kv b{font-family:var(--mono);font-variant-numeric:tabular-nums;font-weight:600;text-align:right}
+.scale{position:relative;height:56px;margin:4px 6px 0}
+.track{position:absolute;left:0;right:0;top:22px;height:8px;border-radius:4px;background:linear-gradient(90deg,var(--bad-bg),var(--warn-bg),var(--good-bg))}
+.mk{position:absolute;top:14px;width:2px;height:24px;background:var(--muted)}
+.mk span{position:absolute;top:26px;left:50%;transform:translateX(-50%);font-size:11px;color:var(--muted);white-space:nowrap}
+.you{position:absolute;top:0;width:14px;height:14px;margin-left:-7px;border-radius:50%;background:var(--accent);border:2px solid var(--surface)}
+.you span{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);font:600 11px var(--mono);color:var(--accent);white-space:nowrap}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{padding:6px 4px;border-bottom:1px solid var(--line);text-align:right;font-variant-numeric:tabular-nums}
+th:first-child,td:first-child{text-align:left}
+td{font-family:var(--mono)}
+.note{font-size:13px;color:var(--muted);margin:0}
+.toast{font-size:13px;color:var(--good);min-height:1em}
+.settings{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.settings label{font-size:13px;font-weight:600;display:grid;gap:4px}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>Offer Check</h1>
+  <p>Work out what to ask a recruiter, capture their answers, and see whether the offer actually beats the package you have today.</p>
+  <div class="bar">
+    <span class="tag" id="sampleTag">Sample figures — replace with yours</span>
+    <button id="clearBtn">Clear all</button>
+    <button id="copyBtn" class="primary">Copy summary</button>
+    <span class="toast" id="toast" role="status"></span>
+  </div>
+</header>
+
+<div class="grid">
+<main style="display:grid;gap:24px;min-width:0">
+
+<section class="step" aria-labelledby="s1">
+  <h2 id="s1"><span class="n">1</span>Pay and benefits: today vs offer</h2>
+  <p>Fill in your current package, then the offer column as the recruiter answers. Leave anything unknown at 0 and come back to it.</p>
+  <div class="cols">
+    <span class="h first"></span><span class="h">Current</span><span class="h">Offer</span>
+
+    <label for="cBase">Base salary<small>Annual, before tax</small></label>
+    <div class="money"><span>£</span><input type="number" id="cBase" min="0" step="500"></div>
+    <div class="money"><span>£</span><input type="number" id="oBase" min="0" step="500"></div>
+
+    <label for="cPen">Employer pension %<small>Employer's own contribution only</small></label>
+    <input type="number" id="cPen" min="0" step="0.5"><input type="number" id="oPen" min="0" step="0.5">
+
+    <label for="cBon">Bonus %<small>Typical payout today; target for the offer</small></label>
+    <input type="number" id="cBon" min="0" step="0.5"><input type="number" id="oBon" min="0" step="0.5">
+
+    <label for="cRel">Bonus you can count on<small>Proven payout vs a target</small></label>
+    <select id="cRel"><option value="1">All of it</option><option value="0.5">Half</option><option value="0">None</option></select>
+    <select id="oRel"><option value="1">All of it</option><option value="0.5">Half</option><option value="0">None</option></select>
+
+    <label for="cAllow">Allowances<small>Car, flex benefits, cash allowances</small></label>
+    <div class="money"><span>£</span><input type="number" id="cAllow" min="0" step="100"></div>
+    <div class="money"><span>£</span><input type="number" id="oAllow" min="0" step="100"></div>
+
+    <label for="cMed">Private medical / insurance<small>Rough annual value to you</small></label>
+    <div class="money"><span>£</span><input type="number" id="cMed" min="0" step="100"></div>
+    <div class="money"><span>£</span><input type="number" id="oMed" min="0" step="100"></div>
+
+    <label for="cHol">Holiday days<small>Excluding bank holidays</small></label>
+    <input type="number" id="cHol" min="0" step="1"><input type="number" id="oHol" min="0" step="1">
+
+    <label for="cCom">Commute cost per year<small>Fuel, parking, tickets</small></label>
+    <div class="money"><span>£</span><input type="number" id="cCom" min="0" step="100"></div>
+    <div class="money"><span>£</span><input type="number" id="oCom" min="0" step="100"></div>
+
+    <label for="cHrs">Commute hours per week<small>Round trip, all office days</small></label>
+    <input type="number" id="cHrs" min="0" step="0.5"><input type="number" id="oHrs" min="0" step="0.5">
+  </div>
+</section>
+
+<section class="step" aria-labelledby="s2">
+  <h2 id="s2"><span class="n">2</span>Questions to ask the recruiter</h2>
+  <p>Tick each one once you have an answer, and note what they said. Ask for their salary band before you give a number.</p>
+  <div class="qs" id="qs"></div>
+</section>
+
+<section class="step" aria-labelledby="s3">
+  <h2 id="s3"><span class="n">3</span>Your decision lines</h2>
+  <p>How much better the offer must be before moving is worth the disruption and risk. Raise these for a riskier employer, such as a consultancy or a client-placed role.</p>
+  <div class="settings">
+    <label for="tCon">"Consider" uplift %<input type="number" id="tCon" min="0" step="1"></label>
+    <label for="tStr">"Strong yes" uplift %<input type="number" id="tStr" min="0" step="1"></label>
+  </div>
+</section>
+</main>
+
+<aside aria-label="Result">
+  <div class="panel">
+    <div class="verdict" id="verdict"></div>
+    <div class="scale" id="scale" aria-hidden="true"></div>
+    <div class="kv" id="totals"></div>
+  </div>
+  <div class="panel">
+    <strong>Base salary you need</strong>
+    <p class="note" id="needNote"></p>
+    <table id="need"><thead><tr><th>Line</th><th>Total value</th><th>Base needed</th></tr></thead><tbody></tbody></table>
+  </div>
+  <div class="panel">
+    <strong>How this is worked out</strong>
+    <p class="note">Total value = base + employer pension + the part of the bonus you can count on + allowances + medical. The offer also gains or loses the value of any holiday difference (a day's pay per day) and any change in commute cost. Commute time is shown but not given a cash value.</p>
+  </div>
+</aside>
+</div>
+</div>
+
+<script>
+const QUESTIONS=[
+ ["The role",[
+  ["Who is the employer, and is the role in-house or placed with a client?","Client placements can end with the contract. Ask who the client is and how long the engagement runs."],
+  ["Where is it based, and how many office days are expected?","Drives commute cost and time in step 1."],
+  ["Why is the role open — new, or a replacement?","If a replacement, ask why the last person left."],
+  ["How many people would I manage, and are they direct reports?","Separates real leadership from informal coaching, and affects the level you should be paid at."],
+  ["What does success look like at 6 and 12 months?","Vague answers usually mean an undefined role."],
+  ["What is the progression path from this role?","Tells you whether this moves you toward where you want to be."]]],
+ ["The money",[
+  ["What is the salary band for the role?","Get their band before naming your number."],
+  ["What is the employer pension contribution? Matched or non-contributory? Salary sacrifice?","A 10% vs 3% pension is a 7% swing in real pay."],
+  ["What is the bonus target, and what did it actually pay out in recent years?","Count only what is proven. Use 'Bonus you can count on' in step 1."],
+  ["Is the band fixed, or is there room for specialist experience?","Shows whether your strongest skills are being priced in."]]],
+ ["The safety net",[
+  ["What are holiday, sick pay and private medical terms?","These rarely come up unless you ask, and are often weaker outside large banks and corporates."],
+  ["What is the notice period, and are there redundancy or redeployment terms?","Matters most for client-placed or contract-dependent roles."]]]
+];
+const SAMPLE={cBase:70000,oBase:82000,cPen:10,oPen:5,cBon:10,oBon:8,cRel:"1",oRel:"0.5",cAllow:0,oAllow:0,cMed:0,oMed:600,cHol:25,oHol:25,cCom:2400,oCom:1500,cHrs:7.5,oHrs:5,tCon:10,tStr:20,qa:{},qn:{}};
+const ids=["cBase","oBase","cPen","oPen","cBon","oBon","cRel","oRel","cAllow","oAllow","cMed","oMed","cHol","oHol","cCom","oCom","cHrs","oHrs","tCon","tStr"];
+const KEY="offer-check-v1";
+let st;
+try{st=JSON.parse(localStorage.getItem(KEY))}catch(e){}
+if(!st)st=structuredClone(SAMPLE);
+st.qa=st.qa||{};st.qn=st.qn||{};
+
+const qs=document.getElementById("qs");
+let qi=0;
+QUESTIONS.forEach(([g,list])=>{
+  const h=document.createElement("h3");h.className="group";h.textContent=g;qs.appendChild(h);
+  list.forEach(([t,why])=>{
+    const id="q"+(qi++);
+    const d=document.createElement("div");d.className="q";
+    d.innerHTML=`<input type="checkbox" id="${id}"><label for="${id}"><span class="t"></span><br><span class="why"></span></label><textarea id="${id}n" aria-label="Answer" placeholder="Their answer"></textarea>`;
+    d.querySelector(".t").textContent=t;d.querySelector(".why").textContent=why;
+    qs.appendChild(d);
+    const cb=d.querySelector("input"),tx=d.querySelector("textarea");
+    cb.checked=!!st.qa[id];tx.value=st.qn[id]||"";
+    cb.addEventListener("change",()=>{st.qa[id]=cb.checked;save()});
+    tx.addEventListener("input",()=>{st.qn[id]=tx.value;save()});
+  });
+});
+
+ids.forEach(i=>{const el=document.getElementById(i);el.value=st[i]??"";el.addEventListener("input",()=>{st[i]=el.value;save();calc()})});
+
+function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}markSample()}
+function markSample(){document.getElementById("sampleTag").hidden=JSON.stringify(ids.map(i=>String(st[i])))!==JSON.stringify(ids.map(i=>String(SAMPLE[i])))}
+const n=i=>parseFloat(st[i])||0;
+const gbp=v=>"£"+Math.round(v).toLocaleString("en-GB");
+
+let last={};
+function calc(){
+  const cb=n("cBase"),ob=n("oBase");
+  const cur=cb*(1+n("cPen")/100+n("cBon")/100*parseFloat(st.cRel))+n("cAllow")+n("cMed");
+  const dDays=n("oHol")-n("cHol"), comSave=n("cCom")-n("oCom");
+  const rate=1+n("oPen")/100+n("oBon")/100*parseFloat(st.oRel)+dDays/260;
+  const fixed=n("oAllow")+n("oMed")+comSave;
+  const off=ob*rate+fixed;
+  const con=cur*(1+n("tCon")/100), str=cur*(1+n("tStr")/100);
+  const diff=off-cur, pct=cur?diff/cur*100:0;
+  let v,cls;
+  if(!cb){v=["Add your current package","Start with step 1."];cls="v-warn"}
+  else if(!ob){v=["Waiting for an offer","Your decision lines are ready on the right."];cls="v-warn"}
+  else if(off<cur){v=["Walk away",`The offer is worth ${gbp(-diff)} less than today.`];cls="v-bad"}
+  else if(off<con){v=["Break-even",`Only ${pct.toFixed(1)}% better. Move only for a clear career step.`];cls="v-warn"}
+  else if(off<str){v=["Consider",`${pct.toFixed(1)}% better than today.`];cls="v-good"}
+  else {v=["Strong yes",`${pct.toFixed(1)}% better than today.`];cls="v-good"}
+  const ve=document.getElementById("verdict");ve.className="verdict "+cls;
+  ve.innerHTML=`<span class="big"></span><span></span>`;ve.children[0].textContent=v[0];ve.children[1].textContent=v[1];
+
+  const hrsSaved=(n("cHrs")-n("oHrs"))*46;
+  document.getElementById("totals").innerHTML=
+   `<span>Today's total value</span><b>${gbp(cur)}</b><span>Offer total value</span><b>${ob?gbp(off):"—"}</b><span>Difference</span><b>${ob?(diff>=0?"+":"−")+gbp(Math.abs(diff)):"—"}</b><span>Commute time saved</span><b>${hrsSaved>=0?"":"−"}${Math.abs(Math.round(hrsSaved))} hrs/yr</b>`;
+
+  const sc=document.getElementById("scale");
+  const lo=cur*0.85, hi=Math.max(str*1.08, off*1.03, cur*1.3);
+  const pos=x=>Math.min(100,Math.max(0,(x-lo)/(hi-lo)*100));
+  sc.innerHTML=`<div class="track"></div>`+
+   [["Break-even",cur],["Consider",con],["Strong",str]].map(([l,x])=>`<div class="mk" style="left:${pos(x)}%"><span>${l}</span></div>`).join("")+
+   (ob?`<div class="you" style="left:${pos(off)}%"><span>Offer</span></div>`:"");
+
+  const tb=document.querySelector("#need tbody");
+  tb.innerHTML=[["Break-even",cur],["Consider",con],["Strong yes",str]].map(([l,t])=>`<tr><td>${l}</td><td>${gbp(t)}</td><td>${gbp((t-fixed)/rate)}</td></tr>`).join("");
+  document.getElementById("needNote").textContent=`At the offer's ${n("oPen")}% pension and ${n("oBon")}% bonus (counting ${st.oRel==="1"?"all":st.oRel==="0.5"?"half":"none"} of it). Change those in step 1 to test other answers.`;
+  last={cur,off,con,str,diff,pct,verdict:v[0],rate,fixed,ob,hrsSaved};
+}
+
+document.getElementById("clearBtn").addEventListener("click",()=>{
+  ids.forEach(i=>st[i]=(i==="cRel"||i==="oRel")?"1":(i==="tCon"?10:i==="tStr"?20:""));
+  st.qa={};st.qn={};
+  ids.forEach(i=>document.getElementById(i).value=st[i]);
+  document.querySelectorAll(".q input").forEach(c=>c.checked=false);
+  document.querySelectorAll(".q textarea").forEach(t=>t.value="");
+  save();calc();
+});
+
+document.getElementById("copyBtn").addEventListener("click",()=>{
+  const L=last;let t=`Offer check\nVerdict: ${L.verdict}\nToday's total value: ${gbp(L.cur)}\nOffer total value: ${L.ob?gbp(L.off):"not yet known"}\n`;
+  if(L.ob)t+=`Difference: ${L.diff>=0?"+":"-"}${gbp(Math.abs(L.diff))} (${L.pct.toFixed(1)}%)\n`;
+  t+=`Base needed: break-even ${gbp((L.cur-L.fixed)/L.rate)}, consider ${gbp((L.con-L.fixed)/L.rate)}, strong yes ${gbp((L.str-L.fixed)/L.rate)}\n\nRecruiter answers:\n`;
+  let i=0;QUESTIONS.forEach(([g,list])=>list.forEach(([q])=>{const id="q"+(i++);t+=`${st.qa[id]?"[x]":"[ ]"} ${q}${st.qn[id]?"\n    "+st.qn[id]:""}\n`}));
+  const toast=document.getElementById("toast");
+  navigator.clipboard.writeText(t).then(()=>{toast.textContent="Summary copied"},()=>{toast.textContent="Copy blocked here. Select the figures on the page instead."});
+  setTimeout(()=>toast.textContent="",3000);
+});
+
+markSample();calc();
+</script>
+</body>
+</html>
