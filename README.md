@@ -1,6 +1,6 @@
 # Offer Check
 
-© 2026 Metis Signal. All rights reserved.
+© 2026 Metis Signal Ltd. All rights reserved.
 
 A simple web app that helps job seekers:
 
@@ -45,7 +45,7 @@ BACKLOG.md   Ideas and next steps
 
 ## Licence
 
-Proprietary. Copyright (c) 2026 Metis Signal. All rights reserved. See `LICENSE`.
+Proprietary. Copyright (c) 2026 Metis Signal Ltd. All rights reserved. See `LICENSE`.
 
 ## Deploy (Cloudflare Workers)
 
