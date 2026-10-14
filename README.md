@@ -39,3 +39,16 @@ BACKLOG.md   Ideas and next steps
 ## Licence
 
 Private project. Add a licence before making the repo public.
+
+## Deploy (Cloudflare Workers)
+
+The site deploys as a static-assets Worker named `offer-check`, configured in `wrangler.jsonc`. `.assetsignore` keeps repo files like this README off the site.
+
+**One-off deploy from your machine:**
+
+```
+npx wrangler login     # first time only
+npx wrangler deploy
+```
+
+**Automatic deploys (recommended):** in the Cloudflare dashboard, open the `offer-check` Worker → Settings → Builds → Connect to Git, and pick `Grexon85/offer-check`, branch `main`. Every push to `main` then deploys itself.

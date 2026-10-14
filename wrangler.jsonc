@@ -1,0 +1,9 @@
+{
+  // Static site served by a Cloudflare Worker (offer-check.grxn.workers.dev / offer-check.net)
+  "name": "offer-check",
+  "compatibility_date": "2025-09-01",
+  "assets": {
+    "directory": "./",
+    "not_found_handling": "404-page"
+  }
+}
