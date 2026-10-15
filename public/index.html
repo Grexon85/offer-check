@@ -92,6 +92,11 @@ td{font-family:var(--mono)}
 .toast{font-size:13px;color:var(--good);min-height:1em}
 .settings{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
 .settings label{font-size:13px;font-weight:600;display:grid;gap:4px}
+.seg{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);border-radius:8px;padding:3px;gap:3px;background:var(--bg)}
+.seg button{border:0;background:transparent;padding:6px 8px;border-radius:6px;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.12)}
+.basis{font-size:12px;color:var(--muted);margin:0;line-height:1.45}
+.alert{font-size:13px;background:var(--warn-bg);color:var(--warn);border-radius:6px;padding:8px 10px;margin:0}
 </style>
 
 </head>
@@ -167,24 +172,30 @@ td{font-family:var(--mono)}
   <div class="settings">
     <label for="tCon">"Consider" uplift %<input type="number" id="tCon" min="0" step="1"></label>
     <label for="tStr">"Strong yes" uplift %<input type="number" id="tStr" min="0" step="1"></label>
+    <label for="tReg">Where you pay income tax<select id="tReg"><option value="ruk">England, Wales or NI</option><option value="sco">Scotland</option></select></label>
   </div>
 </section>
 </main>
 
 <aside aria-label="Result">
   <div class="panel">
+    <div class="seg" role="group" aria-label="Compare values"><button type="button" id="vNet" aria-pressed="true">After tax</button><button type="button" id="vGross" aria-pressed="false">Before tax</button></div>
     <div class="verdict" id="verdict"></div>
     <div class="scale" id="scale" aria-hidden="true"></div>
     <div class="kv" id="totals"></div>
+    <p class="alert" id="taperNote" hidden></p>
+    <p class="basis" id="basis"></p>
   </div>
   <div class="panel">
     <strong>Base salary you need</strong>
     <p class="note" id="needNote"></p>
-    <table id="need"><thead><tr><th>Line</th><th>Total value</th><th>Base needed</th></tr></thead><tbody></tbody></table>
+    <table id="need"><thead><tr><th>Line</th><th id="needCol">Value after tax</th><th>Base needed</th></tr></thead><tbody></tbody></table>
   </div>
   <div class="panel">
     <strong>How this is worked out</strong>
-    <p class="note">Total value = base + employer pension + the part of the bonus you can count on + allowances + medical. The offer also gains or loses the value of any holiday difference (a day's pay per day) and any change in commute cost. Commute time is shown but not given a cash value.</p>
+    <p class="note"><b>Total value</b> = base + employer pension + the part of the bonus you can count on + allowances + medical. The offer also gains or loses the value of any holiday difference (a day's pay per day) and any change in commute cost. Commute time is shown but not given a cash value.</p>
+    <p class="note"><b>After tax</b> takes off 2026/27 income tax and employee National Insurance from salary, bonus, allowances and holiday value, and income tax from medical cover (a taxable benefit). Employer pension is counted in full because it's paid in before tax, though you'll pay some tax when you draw it. Commute costs come from taxed pay, so they count in full.</p>
+    <p class="note">Not included: student loan repayments, your own pension contributions or salary sacrifice, other income, and non-standard tax codes. Figures are illustrative estimates, not financial or tax advice.</p>
   </div>
 </aside>
 </div>
@@ -215,13 +226,13 @@ const QUESTIONS=[
   ["What are holiday, sick pay and private medical terms?","These rarely come up unless you ask, and are often weaker outside large banks and corporates."],
   ["What is the notice period, and are there redundancy or redeployment terms?","Matters most for client-placed or contract-dependent roles."]]]
 ];
-const SAMPLE={cBase:70000,oBase:82000,cPen:10,oPen:5,cBon:10,oBon:8,cRel:"1",oRel:"0.5",cAllow:0,oAllow:0,cMed:0,oMed:600,cHol:25,oHol:25,cCom:2400,oCom:1500,cHrs:7.5,oHrs:5,tCon:10,tStr:20,qa:{},qn:{}};
-const ids=["cBase","oBase","cPen","oPen","cBon","oBon","cRel","oRel","cAllow","oAllow","cMed","oMed","cHol","oHol","cCom","oCom","cHrs","oHrs","tCon","tStr"];
+const SAMPLE={cBase:70000,oBase:82000,cPen:10,oPen:5,cBon:10,oBon:8,cRel:"1",oRel:"0.5",cAllow:0,oAllow:0,cMed:0,oMed:600,cHol:25,oHol:25,cCom:2400,oCom:1500,cHrs:7.5,oHrs:5,tCon:10,tStr:20,tReg:"ruk",view:"net",qa:{},qn:{}};
+const ids=["cBase","oBase","cPen","oPen","cBon","oBon","cRel","oRel","cAllow","oAllow","cMed","oMed","cHol","oHol","cCom","oCom","cHrs","oHrs","tCon","tStr","tReg"];
 const KEY="offer-check-v1";
 let st;
 try{st=JSON.parse(localStorage.getItem(KEY))}catch(e){}
 if(!st)st=structuredClone(SAMPLE);
-st.qa=st.qa||{};st.qn=st.qn||{};
+st.qa=st.qa||{};st.qn=st.qn||{};st.tReg=st.tReg||"ruk";st.view=st.view||"net";
 
 const qs=document.getElementById("qs");
 let qi=0;
@@ -247,29 +258,74 @@ function markSample(){document.getElementById("sampleTag").hidden=JSON.stringify
 const n=i=>parseFloat(st[i])||0;
 const gbp=v=>"£"+Math.round(v).toLocaleString("en-GB");
 
+/* UK tax, 2026/27. Bands are on taxable income (after the personal allowance). */
+const TAX={
+  ruk:{label:"England, Wales and NI",bands:[[37700,.20],[125140,.40],[Infinity,.45]]},
+  sco:{label:"Scotland",bands:[[3967,.19],[16956,.20],[31092,.21],[62430,.42],[125140,.45],[Infinity,.48]]}
+};
+const PA=12570, NI_PT=12570, NI_UEL=50270;
+function incomeTax(income,reg){
+  const pa=Math.max(0,PA-Math.max(0,(income-100000)/2));
+  let left=Math.max(0,income-pa),t=0,prev=0;
+  for(const [top,r] of TAX[reg].bands){const slice=Math.min(left,top-prev);if(slice<=0)break;t+=slice*r;left-=slice;prev=top}
+  return t;
+}
+const empNI=cash=>Math.max(0,Math.min(cash,NI_UEL)-NI_PT)*.08+Math.max(0,cash-NI_UEL)*.02;
+
+/* One side's value. cash = salary + bonus counted + allowances (+ holiday value for the offer). */
+function value(side,base,net){
+  const p=side==="c"?"c":"o";
+  const rel=parseFloat(st[p+"Rel"]);
+  const hol=side==="o"?(n("oHol")-n("cHol"))/260*base:0;
+  const cash=base*(1+n(p+"Bon")/100*rel)+n(p+"Allow")+hol;
+  const med=n(p+"Med"), pen=base*n(p+"Pen")/100;
+  const com=side==="o"?n("cCom")-n("oCom"):0;
+  if(!net)return {v:cash+med+pen+com,cash};
+  const reg=st.tReg in TAX?st.tReg:"ruk";
+  const taxCash=incomeTax(cash,reg), taxAll=incomeTax(cash+med,reg);
+  return {v:cash-taxCash-empNI(cash)+(med-(taxAll-taxCash))+pen+com,cash:cash+med};
+}
+/* Offer base that reaches a target value (value rises with base, so bisect). */
+function baseFor(target,net){
+  let lo=0,hi=Math.max(1e6,target*4);
+  if(value("o",hi,net).v<target)return NaN;
+  for(let k=0;k<60;k++){const m=(lo+hi)/2;if(value("o",m,net).v<target)lo=m;else hi=m}
+  return hi;
+}
+
 let last={};
 function calc(){
+  const net=st.view!=="gross";
+  document.getElementById("vNet").setAttribute("aria-pressed",net);
+  document.getElementById("vGross").setAttribute("aria-pressed",!net);
   const cb=n("cBase"),ob=n("oBase");
-  const cur=cb*(1+n("cPen")/100+n("cBon")/100*parseFloat(st.cRel))+n("cAllow")+n("cMed");
-  const dDays=n("oHol")-n("cHol"), comSave=n("cCom")-n("oCom");
-  const rate=1+n("oPen")/100+n("oBon")/100*parseFloat(st.oRel)+dDays/260;
-  const fixed=n("oAllow")+n("oMed")+comSave;
-  const off=ob*rate+fixed;
+  const C=value("c",cb,net),O=value("o",ob,net);
+  const cur=C.v, off=O.v;
   const con=cur*(1+n("tCon")/100), str=cur*(1+n("tStr")/100);
   const diff=off-cur, pct=cur?diff/cur*100:0;
   let v,cls;
   if(!cb){v=["Add your current package","Start with step 1."];cls="v-warn"}
   else if(!ob){v=["Waiting for an offer","Your decision lines are ready on the right."];cls="v-warn"}
-  else if(off<cur){v=["Walk away",`The offer is worth ${gbp(-diff)} less than today.`];cls="v-bad"}
-  else if(off<con){v=["Break-even",`Only ${pct.toFixed(1)}% better. Move only for a clear career step.`];cls="v-warn"}
-  else if(off<str){v=["Consider",`${pct.toFixed(1)}% better than today.`];cls="v-good"}
-  else {v=["Strong yes",`${pct.toFixed(1)}% better than today.`];cls="v-good"}
+  else if(off<cur){v=["Walk away",`The offer is worth ${gbp(-diff)} a year less than today${net?", after tax":""}.`];cls="v-bad"}
+  else if(off<con){v=["Break-even",`Only ${pct.toFixed(1)}% better${net?" after tax":""}. Move only for a clear career step.`];cls="v-warn"}
+  else if(off<str){v=["Consider",`${pct.toFixed(1)}% better than today${net?" after tax":""}.`];cls="v-good"}
+  else {v=["Strong yes",`${pct.toFixed(1)}% better than today${net?" after tax":""}.`];cls="v-good"}
   const ve=document.getElementById("verdict");ve.className="verdict "+cls;
   ve.innerHTML=`<span class="big"></span><span></span>`;ve.children[0].textContent=v[0];ve.children[1].textContent=v[1];
 
+  const lab=net?"value after tax":"total value";
   const hrsSaved=(n("cHrs")-n("oHrs"))*46;
   document.getElementById("totals").innerHTML=
-   `<span>Today's total value</span><b>${gbp(cur)}</b><span>Offer total value</span><b>${ob?gbp(off):"—"}</b><span>Difference</span><b>${ob?(diff>=0?"+":"−")+gbp(Math.abs(diff)):"—"}</b><span>Commute time saved</span><b>${hrsSaved>=0?"":"−"}${Math.abs(Math.round(hrsSaved))} hrs/yr</b>`;
+   `<span>Today's ${lab}</span><b>${gbp(cur)}</b><span>Offer ${lab}</span><b>${ob?gbp(off):"—"}</b><span>Difference</span><b>${ob?(diff>=0?"+":"−")+gbp(Math.abs(diff)):"—"}</b><span>Commute time saved</span><b>${hrsSaved>=0?"":"−"}${Math.abs(Math.round(hrsSaved))} hrs/yr</b>`;
+
+  const reg=st.tReg in TAX?st.tReg:"ruk";
+  document.getElementById("basis").textContent=net
+    ?`After 2026/27 income tax (${TAX[reg].label}) and National Insurance. Employer pension counted in full. Illustrative estimate, not financial advice.`
+    :`Before tax: salary, bonus and pension added at face value. Switch to "After tax" to see what you'd actually keep. Illustrative, not financial advice.`;
+  const tn=document.getElementById("taperNote");
+  const inTaper=[C.cash,ob?O.cash:0].some(x=>x>100000&&x<125140);
+  tn.hidden=!inTaper;
+  if(inTaper)tn.textContent="Pay between £100,000 and £125,140 loses the tax-free personal allowance, so tax on that slice is effectively 60% or more. Salary sacrifice into a pension can help; check with an adviser.";
 
   const sc=document.getElementById("scale");
   const lo=cur*0.85, hi=Math.max(str*1.08, off*1.03, cur*1.3);
@@ -278,14 +334,18 @@ function calc(){
    [["Break-even",cur],["Consider",con],["Strong",str]].map(([l,x])=>`<div class="mk" style="left:${pos(x)}%"><span>${l}</span></div>`).join("")+
    (ob?`<div class="you" style="left:${pos(off)}%"><span>Offer</span></div>`:"");
 
+  document.getElementById("needCol").textContent=net?"Value after tax":"Total value";
+  const need=[["Break-even",cur],["Consider",con],["Strong yes",str]].map(([l,t])=>[l,t,cb?baseFor(t,net):NaN]);
   const tb=document.querySelector("#need tbody");
-  tb.innerHTML=[["Break-even",cur],["Consider",con],["Strong yes",str]].map(([l,t])=>`<tr><td>${l}</td><td>${gbp(t)}</td><td>${gbp((t-fixed)/rate)}</td></tr>`).join("");
-  document.getElementById("needNote").textContent=`At the offer's ${n("oPen")}% pension and ${n("oBon")}% bonus (counting ${st.oRel==="1"?"all":st.oRel==="0.5"?"half":"none"} of it). Change those in step 1 to test other answers.`;
-  last={cur,off,con,str,diff,pct,verdict:v[0],rate,fixed,ob,hrsSaved};
+  tb.innerHTML=need.map(([l,t,b])=>`<tr><td>${l}</td><td>${gbp(t)}</td><td>${isFinite(b)?gbp(b):"—"}</td></tr>`).join("");
+  document.getElementById("needNote").textContent=`At the offer's ${n("oPen")}% pension and ${n("oBon")}% bonus (counting ${st.oRel==="1"?"all":st.oRel==="0.5"?"half":"none"} of it)${net?", after tax":""}. Change those in step 1 to test other answers.`;
+  last={cur,off,con,str,diff,pct,verdict:v[0],ob,hrsSaved,need,net,reg};
 }
+document.getElementById("vNet").addEventListener("click",()=>{st.view="net";save();calc()});
+document.getElementById("vGross").addEventListener("click",()=>{st.view="gross";save();calc()});
 
 document.getElementById("clearBtn").addEventListener("click",()=>{
-  ids.forEach(i=>st[i]=(i==="cRel"||i==="oRel")?"1":(i==="tCon"?10:i==="tStr"?20:""));
+  ids.forEach(i=>st[i]=(i==="cRel"||i==="oRel")?"1":(i==="tCon"?10:i==="tStr"?20:i==="tReg"?st.tReg:""));
   st.qa={};st.qn={};
   ids.forEach(i=>document.getElementById(i).value=st[i]);
   document.querySelectorAll(".q input").forEach(c=>c.checked=false);
@@ -294,9 +354,10 @@ document.getElementById("clearBtn").addEventListener("click",()=>{
 });
 
 document.getElementById("copyBtn").addEventListener("click",()=>{
-  const L=last;let t=`Offer check\nVerdict: ${L.verdict}\nToday's total value: ${gbp(L.cur)}\nOffer total value: ${L.ob?gbp(L.off):"not yet known"}\n`;
+  const L=last,lab=L.net?"value after tax":"total value (before tax)";
+  let t=`Offer check\nBasis: ${L.net?"after 2026/27 income tax ("+TAX[L.reg].label+") and NI":"before tax"}. Illustrative estimate, not financial advice.\nVerdict: ${L.verdict}\nToday's ${lab}: ${gbp(L.cur)}\nOffer ${lab}: ${L.ob?gbp(L.off):"not yet known"}\n`;
   if(L.ob)t+=`Difference: ${L.diff>=0?"+":"-"}${gbp(Math.abs(L.diff))} (${L.pct.toFixed(1)}%)\n`;
-  t+=`Base needed: break-even ${gbp((L.cur-L.fixed)/L.rate)}, consider ${gbp((L.con-L.fixed)/L.rate)}, strong yes ${gbp((L.str-L.fixed)/L.rate)}\n\nRecruiter answers:\n`;
+  t+=`Base needed: ${L.need.map(([l,,b])=>l.toLowerCase()+" "+(isFinite(b)?gbp(b):"n/a")).join(", ")}\n\nRecruiter answers:\n`;
   let i=0;QUESTIONS.forEach(([g,list])=>list.forEach(([q])=>{const id="q"+(i++);t+=`${st.qa[id]?"[x]":"[ ]"} ${q}${st.qn[id]?"\n    "+st.qn[id]:""}\n`}));
   const toast=document.getElementById("toast");
   navigator.clipboard.writeText(t).then(()=>{toast.textContent="Summary copied"},()=>{toast.textContent="Copy blocked here. Select the figures on the page instead."});

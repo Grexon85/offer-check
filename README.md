@@ -26,6 +26,10 @@ To host it, any static host works: GitHub Pages, Cloudflare Pages, Netlify or Ve
 - **Decision lines:** break-even = today's total; consider and strong yes = today's total plus a user-set uplift (default 10% and 20%).
 - **Base needed** solves for the offer base that hits each line, given the offer's pension, bonus and other terms.
 
+- **After tax (default view):** salary, counted bonus, allowances and holiday value lose 2026/27 income tax (England/Wales/NI or Scottish bands, with the £100k personal allowance taper) and employee NI. Medical loses income tax as a benefit in kind. Employer pension and commute savings count in full. "Base needed" is solved numerically, by bisection. A **Before tax** toggle shows the original gross comparison.
+- **Not modelled:** student loans, employee pension contributions or salary sacrifice, other income, tax codes, and tax on pension withdrawals. Results are illustrative, not advice.
+- **Update each April:** the bands and thresholds in `TAX`, `PA`, `NI_PT` and `NI_UEL` in `public/index.html`.
+
 Commute time is shown in hours per year but isn't given a cash value.
 
 ## Project structure
