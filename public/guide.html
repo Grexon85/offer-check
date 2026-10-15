@@ -6,7 +6,7 @@
 <title>Offer Check Guide</title>
 <meta name="description" content="How to fill in Offer Check: your current package, the recruiter questions, the offer, your decision lines and the verdict.">
 <meta name="copyright" content="&copy; 2026 Offer Check. All rights reserved.">
-<meta name="theme-color" content="#0f6b5c">
+<meta name="theme-color" content="#0d5c52">
 <link rel="canonical" href="https://offer-check.net/guide.html">
 <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
@@ -21,21 +21,21 @@
 <style>
 /* Layout: a field manual. Video first, then a sticky step index on the left and the detailed steps on the right; one column on phones. */
 :root{
-  --bg:#f3f5f4; --surface:#ffffff; --ink:#17201d; --muted:#5b6a65; --line:#d6dedb;
-  --accent:#0f6b5c; --accent-soft:#dcefea;
-  --good:#1d7a3e; --warn:#a86a00; --bad:#b3261e; --good-bg:#e1f3e6; --warn-bg:#fbf0d9; --bad-bg:#fbe3e0;
-  --display:"Familjen Grotesk","Helvetica Neue",Arial,sans-serif;
-  --body:"Source Sans 3","Segoe UI",system-ui,sans-serif;
-  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  --bg:#f5f4f0; --surface:#ffffff; --ink:#141c1a; --muted:#55635e; --line:#dfe5e1;
+  --accent:#0d5c52; --accent-soft:#e3efeb; --accent-strong:#09463e;
+  --good:#1d7a3e; --warn:#a9620c; --bad:#b3261e; --good-bg:#e3f2e7; --warn-bg:#fcf1df; --bad-bg:#fbe5e1;
+  --display:"Plus Jakarta Sans","Helvetica Neue",Arial,sans-serif;
+  --body:"Plus Jakarta Sans","Segoe UI",system-ui,sans-serif;
+  --mono:"Plus Jakarta Sans","Segoe UI",system-ui,sans-serif; --code:"JetBrains Mono",ui-monospace,Menlo,monospace;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#101614; --surface:#18201e; --ink:#e6eeeb; --muted:#9aaba5; --line:#2c3835;
-  --accent:#4fc2ab; --accent-soft:#183a33;
-  --good:#6fd18f; --warn:#e8b252; --bad:#f08a80; --good-bg:#16301f; --warn-bg:#352a12; --bad-bg:#3a1a17; color-scheme:dark}}
+  --bg:#0e1513; --surface:#16201d; --ink:#e8efec; --muted:#9db0aa; --line:#27332f;
+  --accent:#5cc4ae; --accent-soft:#163530; --accent-strong:#7fd6c3;
+  --good:#6fd18f; --warn:#eaa957; --bad:#f08a80; --good-bg:#15301e; --warn-bg:#33270f; --bad-bg:#3a1a17; color-scheme:dark}}
 :root[data-theme="dark"]{
-  --bg:#101614; --surface:#18201e; --ink:#e6eeeb; --muted:#9aaba5; --line:#2c3835;
-  --accent:#4fc2ab; --accent-soft:#183a33;
-  --good:#6fd18f; --warn:#e8b252; --bad:#f08a80; --good-bg:#16301f; --warn-bg:#352a12; --bad-bg:#3a1a17; color-scheme:dark}
+  --bg:#0e1513; --surface:#16201d; --ink:#e8efec; --muted:#9db0aa; --line:#27332f;
+  --accent:#5cc4ae; --accent-soft:#163530; --accent-strong:#7fd6c3;
+  --good:#6fd18f; --warn:#eaa957; --bad:#f08a80; --good-bg:#15301e; --warn-bg:#33270f; --bad-bg:#3a1a17; color-scheme:dark}
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
@@ -90,17 +90,18 @@ code,.num{font-family:var(--mono);font-size:.92em}
 .v-bad{background:var(--bad-bg);color:var(--bad)}.v-warn{background:var(--warn-bg);color:var(--warn)}.v-good{background:var(--good-bg);color:var(--good)}
 pre{margin:0;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;overflow-x:auto;font:14px/1.7 var(--mono)}
 </style>
+<link rel="stylesheet" href="assets/brand.css">
 </head>
 <body>
 <div class="wrap">
 
 <div class="site-bar">
-  <a class="site-brand" href="index.html" aria-label="Offer Check home"><svg viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#0f6b5c"/><path d="M14 42h36" stroke="#9fd9cc" stroke-width="4" stroke-linecap="round"/><path d="M19 29l8 8 18-19" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg><span><span class="wm">Offer <span>Check</span></span></span></a>
+  <a class="site-brand" href="index.html" aria-label="Offer Check home"><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="32" fill="#0d5c52"/><path d="M18.5 33.5l9 9 18-19" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg><span><span class="wm">Offer <span>Check</span></span></span></a>
   <nav class="site-nav" aria-label="Main"><a href="index.html">Compare offers</a><a href="guide.html" aria-current="page">Guide</a></nav>
 </div>
 
 <div class="hero">
-  <h1>How to use Offer Check</h1>
+  <h1>How to use <span class="hl">Offer Check</span></h1>
   <p class="lead">Fill it in five steps, in this order: your current package, the recruiter questions, the offer, your decision lines, then the verdict. It takes about 10 minutes once you have your paperwork to hand.</p>
 </div>
 
