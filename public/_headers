@@ -1,0 +1,37 @@
+# Caching for offer-check.net static assets.
+# Cloudflare's default is "max-age=0, must-revalidate" (re-check on every visit), so each rule
+# removes that default before setting its own. Pages (HTML) keep the default so updates show at once.
+
+# Fonts never change under the same name: keep for a year.
+/assets/fonts/*
+  ! Cache-Control
+  Cache-Control: public, max-age=31536000, immutable
+
+# Styles are versioned with ?v= in the page, so a day is safe.
+/assets/site.css
+  ! Cache-Control
+  Cache-Control: public, max-age=86400
+
+/assets/icon.svg
+  ! Cache-Control
+  Cache-Control: public, max-age=604800
+
+/assets/apple-touch-icon.png
+  ! Cache-Control
+  Cache-Control: public, max-age=604800
+
+/assets/og-image.png
+  ! Cache-Control
+  Cache-Control: public, max-age=86400
+
+/assets/walkthrough-poster.jpg
+  ! Cache-Control
+  Cache-Control: public, max-age=86400
+
+/assets/walkthrough.mp4
+  ! Cache-Control
+  Cache-Control: public, max-age=86400
+
+/assets/walkthrough.en.vtt
+  ! Cache-Control
+  Cache-Control: public, max-age=86400

@@ -37,3 +37,88 @@
 .legal p,.legal li{margin:0;max-width:68ch}
 .legal ul{margin:0;padding-left:22px;display:grid;gap:6px}
 .legal .summary{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px 18px}
+
+/* Offer Check brand layer (from the Instagram/Canva style): warm paper background, deep teal,
+   mint panels, amber for caution, heavy geometric headings, soft rounded cards.
+   Loaded after each page's own styles so it can restyle shared components. */
+
+html,body{overflow-x:clip}
+body{font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased}
+input[type=number]{font-variant-numeric:tabular-nums}
+h1,h2,h3,.wm{letter-spacing:-.025em}
+h1{font-weight:800!important;line-height:1.04!important}
+h1 .hl{color:var(--accent)}
+h2,h3{font-weight:800}
+
+/* Brand bar and nav */
+.site-bar{border-bottom:0;padding-bottom:6px}
+.site-nav a{border-radius:999px;padding:7px 14px;font-weight:700}
+.site-nav a[aria-current="page"]{background:var(--accent);color:#fff}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .site-nav a[aria-current="page"]{color:var(--bg)}}
+
+/* Decorative rings in the top corner, as on the carousels (behind everything) */
+body{position:relative}
+body::before{content:"";position:absolute;z-index:-1;pointer-events:none;right:0;top:0;width:380px;height:380px;opacity:.6;
+  background:repeating-radial-gradient(circle at 100% 0,transparent 0 22px,var(--accent-soft) 22px 24px)}
+@media (max-width:700px){body::before{width:220px;height:220px}}
+header h1,.hero h1{margin-bottom:6px!important}
+
+/* Cards */
+section.step,.panel,.video,.prep,.tablewrap,.qg,pre,.legal .summary{border-radius:20px;border-color:var(--line);
+  box-shadow:0 1px 2px rgba(20,28,26,.04),0 10px 28px -16px rgba(20,28,26,.18)}
+section.step{padding:24px}
+.panel{padding:20px}
+.video{padding:14px}
+.video video{border-radius:12px}
+
+/* Step numbers become solid teal badges */
+.step h2 .n{display:inline-grid;place-items:center;width:32px;height:32px;border-radius:50%;background:var(--accent);color:var(--surface);font:800 15px var(--display);flex:none;transform:translateY(-2px)}
+.step h2{align-items:center;font-size:22px}
+nav.toc i{background:var(--accent);color:var(--surface);border:0;font:800 12px var(--display)}
+.eyebrow{font:800 13px var(--display)!important;letter-spacing:.12em!important;text-transform:uppercase}
+
+/* Buttons and pills */
+button{border-radius:12px;font-weight:700;padding:9px 16px;transition:background .15s,border-color .15s}
+button.primary{background:var(--accent);border-color:var(--accent)}
+button.primary:hover{background:var(--accent-strong);border-color:var(--accent-strong)}
+button:not(.primary):hover{border-color:var(--accent)}
+.tag{border-radius:999px;padding:5px 12px;font:700 12px var(--display);letter-spacing:.02em}
+
+/* Inputs */
+input,select,textarea{border-radius:10px;border-color:var(--line);background:var(--surface);padding:9px 11px}
+input:hover,select:hover,textarea:hover{border-color:color-mix(in srgb,var(--accent) 45%,var(--line))}
+input:focus-visible,select:focus-visible,textarea:focus-visible{outline:0;border-color:var(--accent);box-shadow:0 0 0 4px var(--accent-soft)}
+.cols .h{color:var(--accent);font-weight:800}
+
+/* Questions */
+.group{font-weight:800;font-size:16px}
+.q{border-top-color:var(--line)}
+
+/* Result panel */
+.seg{border-radius:14px;background:var(--accent-soft);border-color:transparent}
+.seg button{border-radius:10px;font-weight:700}
+.seg button[aria-pressed="true"]{color:var(--accent)}
+.verdict{border-radius:16px;padding:16px 18px;border:1.5px solid transparent}
+.verdict .big{font-weight:800;font-size:28px;letter-spacing:-.02em}
+.v-warn{border-color:color-mix(in srgb,var(--warn) 35%,transparent)}
+.v-good{border-color:color-mix(in srgb,var(--good) 30%,transparent)}
+.v-bad{border-color:color-mix(in srgb,var(--bad) 30%,transparent)}
+.kv b{font-weight:800}
+.alert{border-radius:12px;border:1.5px solid color-mix(in srgb,var(--warn) 35%,transparent)}
+td{font-family:var(--body)}
+#need tbody tr:nth-child(2) td{background:var(--accent-soft);color:var(--accent);font-weight:700}
+.you{box-shadow:0 0 0 2px var(--accent)}
+
+/* Guide */
+.tip{border-left:0;border-radius:16px;padding:14px 18px;border:1.5px solid color-mix(in srgb,var(--accent) 25%,transparent)}
+.tip.warn{border-color:color-mix(in srgb,var(--warn) 35%,transparent)}
+.qg{background:var(--accent-soft);border-color:transparent;box-shadow:none}
+.v{border-radius:16px;border:1.5px solid transparent}
+.v small{font-family:var(--display)!important;font-weight:700}
+pre{font-family:var(--code)!important}
+code{font-family:var(--code)}
+th{font-weight:800}
+
+/* Footer */
+.site-footer{border-top:0;background:var(--accent-soft);border-radius:20px;padding:20px 22px;margin-top:24px}
+.site-footer a{color:var(--accent)}

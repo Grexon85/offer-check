@@ -41,7 +41,8 @@ public/                The deployed site
   terms.html           Terms of use
   privacy.html         Privacy notice
   404.html             Not-found page
-  assets/              Shared styles, fonts, icons, share image, walkthrough video
+  assets/              Shared styles (site.css: bump ?v= in each page when it changes), fonts, icons, share image, walkthrough video
+  _headers             Browser caching rules (fonts 1 year, other assets 1 day; pages always fresh)
 wrangler.jsonc         Cloudflare Workers config
 README.md    This file
 BACKLOG.md   Ideas and next steps
@@ -63,3 +64,7 @@ npx wrangler deploy
 ```
 
 **Automatic deploys (recommended):** in the Cloudflare dashboard, open the `offer-check` Worker → Settings → Builds → Connect to Git, and pick `Grexon85/offer-check`, branch `main`. Set the **deploy command** to `npx wrangler deploy` (not `npx wrangler versions upload`, which uploads a version without sending traffic to it). Every push to `main` then deploys itself.
+
+## Links
+
+Link to clean URLs (`/`, `/guide`, `/terms`, `/privacy`), not `.html` files: Cloudflare redirects `.html` addresses, which costs every visitor an extra round trip.
