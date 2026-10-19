@@ -75,6 +75,6 @@ Link to clean URLs (`/`, `/guide`, `/terms`, `/privacy`), not `.html` files: Clo
 - `src/index.js` is the Worker. It serves `public/` and handles `/api/*`:
   - `POST /api/e` with one of `compare`, `copy`, `installed`, `app_launch`, `video_play` adds 1 to today's count (a SQLite-backed Durable Object). It stores only the event name and date: no cookies, IDs, IP addresses or figures.
   - `GET /api/stats?key=…` shows the totals and the last 30 days (`&format=json` for raw data). It returns 404 unless the `STATS_KEY` secret is set and matches.
-- Set the key once: Cloudflare dashboard → Workers & Pages → offer-check → Settings → Variables and Secrets → add a **Secret** named `STATS_KEY`.
+- The stats key is checked against `STATS_KEY_HASH` (a SHA-256 fingerprint) in `wrangler.jsonc`, so it survives every deploy and the key never sits in this public repo. To change the key, put the SHA-256 of the new key there (`printf '%s' 'new-key' | sha256sum`).
 - `public/manifest.webmanifest` and `public/sw.js` make the site installable (Install app button on Chrome/Edge/Android; Add to Home Screen on iPhone) and usable offline. Bump `CACHE` in `sw.js` when core files change.
 - Local test: put `STATS_KEY="something"` in `.dev.vars`, then `npx wrangler dev`.

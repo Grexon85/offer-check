@@ -31,6 +31,17 @@ export class Counter extends DurableObject {
   }
 }
 
+// The stats key is checked against a SHA-256 fingerprint (STATS_KEY_HASH in wrangler.jsonc),
+// so the key itself never appears in this public repo. A STATS_KEY secret also works if set.
+async function keyOk(key, env) {
+  if (!key) return false;
+  if (env.STATS_KEY && key === env.STATS_KEY) return true;
+  if (!env.STATS_KEY_HASH) return false;
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(key));
+  const hex = [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, "0")).join("");
+  return hex === env.STATS_KEY_HASH;
+}
+
 const counter = (env) => env.COUNTER.get(env.COUNTER.idFromName("global"));
 const today = () => new Date().toISOString().slice(0, 10);
 
@@ -47,7 +58,7 @@ export default {
     }
 
     if (url.pathname === "/api/stats") {
-      if (!env.STATS_KEY || url.searchParams.get("key") !== env.STATS_KEY) {
+      if (!(await keyOk(url.searchParams.get("key"), env))) {
         return new Response("Not found", { status: 404 });
       }
       const since = new Date(Date.now() - 29 * 864e5).toISOString().slice(0, 10);

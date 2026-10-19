@@ -9,6 +9,10 @@
     "not_found_handling": "404-page",
     "run_worker_first": ["/api/*"]
   },
+  "vars": {
+    // SHA-256 of the private stats key (the key itself is not stored anywhere in the repo)
+    "STATS_KEY_HASH": "58ebf7a07a1d7a350ca1aaeaf8683c122fa0b03ac9fb4919e006647b6533d506"
+  },
   "durable_objects": {
     "bindings": [{ "name": "COUNTER", "class_name": "Counter" }]
   },
