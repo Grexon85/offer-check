@@ -1,9 +1,16 @@
 {
-  // Static site served by a Cloudflare Worker (offer-check.net)
+  // Static site served by a Cloudflare Worker (offer-check.net), with an anonymous usage counter at /api/*
   "name": "offer-check",
+  "main": "./src/index.js",
   "compatibility_date": "2025-09-01",
   "assets": {
     "directory": "./public",
-    "not_found_handling": "404-page"
-  }
+    "binding": "ASSETS",
+    "not_found_handling": "404-page",
+    "run_worker_first": ["/api/*"]
+  },
+  "durable_objects": {
+    "bindings": [{ "name": "COUNTER", "class_name": "Counter" }]
+  },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["Counter"] }]
 }

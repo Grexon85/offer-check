@@ -100,6 +100,7 @@ td{font-family:var(--mono)}
 .alert{font-size:13px;background:var(--warn-bg);color:var(--warn);border-radius:6px;padding:8px 10px;margin:0}
 </style>
 
+<link rel="manifest" href="/manifest.webmanifest">
 <link rel="stylesheet" href="/assets/site.css?v=3">
 </head>
 <body>
@@ -115,6 +116,7 @@ td{font-family:var(--mono)}
     <span class="tag" id="sampleTag">Sample figures — replace with yours</span>
     <button id="clearBtn">Clear all</button>
     <button id="copyBtn" class="primary">Copy summary</button>
+    <button id="installBtn" hidden>Install app</button>
     <span class="toast" id="toast" role="status"></span>
   </div>
 </header>
@@ -296,6 +298,7 @@ function baseFor(target,net){
 }
 
 let last={};
+let sentCompare=false;
 function calc(){
   const net=st.view!=="gross";
   document.getElementById("vNet").setAttribute("aria-pressed",net);
@@ -342,6 +345,7 @@ function calc(){
   tb.innerHTML=need.map(([l,t,b])=>`<tr><td>${l}</td><td>${gbp(t)}</td><td>${isFinite(b)?gbp(b):"—"}</td></tr>`).join("");
   document.getElementById("needNote").textContent=`At the offer's ${n("oPen")}% pension and ${n("oBon")}% bonus (counting ${st.oRel==="1"?"all":st.oRel==="0.5"?"half":"none"} of it)${net?", after tax":""}. Change those in step 1 to test other answers.`;
   last={cur,off,con,str,diff,pct,verdict:v[0],ob,hrsSaved,need,net,reg};
+  if(!sentCompare&&cb&&ob&&document.getElementById("sampleTag").hidden){sentCompare=true;window.ocTrack&&ocTrack("compare")}
 }
 document.getElementById("vNet").addEventListener("click",()=>{st.view="net";save();calc()});
 document.getElementById("vGross").addEventListener("click",()=>{st.view="gross";save();calc()});
@@ -356,6 +360,7 @@ document.getElementById("clearBtn").addEventListener("click",()=>{
 });
 
 document.getElementById("copyBtn").addEventListener("click",()=>{
+  window.ocTrack&&ocTrack("copy");
   const L=last,lab=L.net?"value after tax":"total value (before tax)";
   let t=`Offer check\nBasis: ${L.net?"after 2026/27 income tax ("+TAX[L.reg].label+") and NI":"before tax"}. Illustrative estimate, not financial advice.\nVerdict: ${L.verdict}\nToday's ${lab}: ${gbp(L.cur)}\nOffer ${lab}: ${L.ob?gbp(L.off):"not yet known"}\n`;
   if(L.ob)t+=`Difference: ${L.diff>=0?"+":"-"}${gbp(Math.abs(L.diff))} (${L.pct.toFixed(1)}%)\n`;
@@ -367,6 +372,18 @@ document.getElementById("copyBtn").addEventListener("click",()=>{
 });
 
 markSample();calc();
+/* Install button: shown only where the browser supports installing (Chrome, Edge, Android). */
+let installEvt=null;const ib=document.getElementById("installBtn");
+window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();installEvt=e;ib.hidden=false});
+ib.addEventListener("click",async()=>{if(!installEvt)return;installEvt.prompt();await installEvt.userChoice;installEvt=null;ib.hidden=true});
+window.addEventListener("appinstalled",()=>{ib.hidden=true});
+</script>
+<script>
+/* Anonymous usage counts (event name only: no cookies, IDs or figures) and installable-app support. */
+window.ocTrack=function(n){try{if(navigator.sendBeacon)navigator.sendBeacon("/api/e",n);else fetch("/api/e",{method:"POST",body:n,keepalive:true})}catch(e){}};
+if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})});
+window.addEventListener("appinstalled",function(){ocTrack("installed")});
+if((matchMedia("(display-mode: standalone)").matches||navigator.standalone)&&new URLSearchParams(location.search).get("source")==="app")ocTrack("app_launch");
 </script>
 </body>
 </html>

@@ -91,6 +91,7 @@ code,.num{font-family:var(--mono);font-size:.92em}
 .v-bad{background:var(--bad-bg);color:var(--bad)}.v-warn{background:var(--warn-bg);color:var(--warn)}.v-good{background:var(--good-bg);color:var(--good)}
 pre{margin:0;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;overflow-x:auto;font:14px/1.7 var(--mono)}
 </style>
+<link rel="manifest" href="/manifest.webmanifest">
 <link rel="stylesheet" href="/assets/site.css?v=3">
 </head>
 <body>
@@ -271,5 +272,13 @@ Strong yes  = today's total × (1 + strong-yes uplift)</pre>
   <p class="small">Offer Check&trade; is a trademark. The tool, text, design, code and video on this site are protected by copyright and may not be copied, reproduced or redistributed without written permission. Offer Check helps you compare job offers; it isn't financial, tax or legal advice.</p>
 </footer>
 </div>
+<script>
+/* Anonymous usage counts (event name only: no cookies, IDs or figures) and installable-app support. */
+window.ocTrack=function(n){try{if(navigator.sendBeacon)navigator.sendBeacon("/api/e",n);else fetch("/api/e",{method:"POST",body:n,keepalive:true})}catch(e){}};
+(function(){var v=document.querySelector("video"),sent=false;if(v)v.addEventListener("play",function(){if(!sent){sent=true;ocTrack("video_play")}})})();
+if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})});
+window.addEventListener("appinstalled",function(){ocTrack("installed")});
+if((matchMedia("(display-mode: standalone)").matches||navigator.standalone)&&new URLSearchParams(location.search).get("source")==="app")ocTrack("app_launch");
+</script>
 </body>
 </html>
