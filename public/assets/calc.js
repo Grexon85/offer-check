@@ -165,7 +165,45 @@
   /* Cash value of commute time saved by the offer (negative if it costs you time). */
   const timeValue = (cHrs, oHrs, perHour) => ((+cHrs || 0) - (+oHrs || 0)) * RATES.COMMUTE_WEEKS * (+perHour || 0);
 
-  const OC = { RATES, incomeTax, employeeNI, studentLoan, childBenefit, hicbc, pensionable, side, monthly, traps, sacCapCost, baseFor,
+  /* ---------- One-off payments ---------- */
+  /* Year-one difference: the offer with its sign-on bonus, against staying and receiving the bonus you'd otherwise give up.
+     Both are taxed as pay in the year received. cP/oP are side() params, o are side() options. */
+  function yearOne(cP, oP, signOn, forfeit, o) {
+    const c = side(Object.assign({}, cP, { extraCash: (+cP.extraCash || 0) + (+forfeit || 0) }), o);
+    const f = side(Object.assign({}, oP, { extraCash: (+oP.extraCash || 0) + (+signOn || 0) }), o);
+    return f.v - c.v;
+  }
+
+  /* ---------- Share links ---------- */
+  /* State travels in the URL fragment (after #), which browsers never send to the server.
+     Format: "v1." + base64url(JSON). Only listed keys, short strings or finite numbers, are accepted back. */
+  const b64url = s => s.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+  function encodeState(st, keys) {
+    const out = {};
+    for (const k of keys) { const v = st[k]; if (v !== "" && v != null) out[k] = v; }
+    const bytes = new TextEncoder().encode(JSON.stringify(out));
+    let bin = ""; bytes.forEach(b => bin += String.fromCharCode(b));
+    return "v1." + b64url(btoa(bin));
+  }
+  function decodeState(str, keys) {
+    try {
+      if (typeof str !== "string" || str.length > 4000 || !str.startsWith("v1.")) return null;
+      let b = str.slice(3).replace(/-/g, "+").replace(/_/g, "/");
+      while (b.length % 4) b += "=";
+      const bin = atob(b), bytes = Uint8Array.from(bin, c => c.charCodeAt(0));
+      const obj = JSON.parse(new TextDecoder().decode(bytes));
+      if (!obj || typeof obj !== "object" || Array.isArray(obj)) return null;
+      const out = {}, allowed = new Set(keys);
+      for (const [k, v] of Object.entries(obj)) {
+        if (!allowed.has(k)) continue;
+        if (typeof v === "number" && isFinite(v)) out[k] = v;
+        else if (typeof v === "string" && v.length <= 24) out[k] = v;
+      }
+      return out;
+    } catch (e) { return null; }
+  }
+
+  const OC = { RATES, incomeTax, yearOne, encodeState, decodeState, employeeNI, studentLoan, childBenefit, hicbc, pensionable, side, monthly, traps, sacCapCost, baseFor,
     fte, holidayValue, workingWeeks, hourly, timeValue };
   g.OC = OC;
   if (typeof module !== "undefined" && module.exports) module.exports = OC;

@@ -10,6 +10,8 @@ A simple web app that helps job seekers:
 
 It's a single static HTML file with no build step and no backend. Each user's figures and notes are saved only in their own browser (`localStorage`).
 
+**Copy link** puts the figures and settings (not the recruiter notes) in the link after `#s=`, which browsers never send to the server. Opening a link keeps the visitor's own saved figures aside under `offer-check-v1-before-link`, with a *Restore my figures* button.
+
 ## Run it
 
 Open `public/index.html` in a browser. That's it.
@@ -25,6 +27,7 @@ To host it, any static host works: GitHub Pages, Cloudflare Pages, Netlify or Ve
 - The **offer** also gains or loses the value of any holiday difference and any change in commute cost. Holiday is compared in weeks off (days ÷ working days a week) at the offer's weekly pay, so 20 days on a four-day week equals 25 on five.
 - **Commute time** gets a cash value only if the user sets what an hour is worth (hours saved × 46 weeks × £/hr).
 - **Hourly rate, all in** = each side's own package after tax, less its commute cost, ÷ (contracted + commute hours) × weeks worked (52 less holiday and 8 bank holidays, in weeks of that side's pattern).
+- **One-off payments** (bonus given up by leaving; sign-on or buy-out) are taxed as pay in year one and shown as a separate *Year one* line. They never move the verdict.
 - **Full-time equivalent** salary shows when either side isn't a five-day week. The verdict still compares actual pay; the hourly rate shows what the time is worth.
 - **Decision lines:** break-even = today's total; consider and strong yes = today's total plus a user-set uplift (default 10% and 20%).
 - **Base needed** solves for the offer base that hits each line, given the offer's pension, bonus and other terms.
@@ -84,7 +87,7 @@ Link to clean URLs (`/`, `/guide`, `/terms`, `/privacy`), not `.html` files: Clo
 ## Usage counts and the installable app
 
 - `src/index.js` is the Worker. It serves `public/` and handles `/api/*`:
-  - `POST /api/e` with one of `compare`, `copy`, `installed`, `app_launch`, `video_play` adds 1 to today's count (a SQLite-backed Durable Object). It stores only the event name and date: no cookies, IDs, IP addresses or figures.
+  - `POST /api/e` with one of `compare`, `copy`, `installed`, `app_launch`, `video_play`, `link_copy`, `link_open` adds 1 to today's count (a SQLite-backed Durable Object). It stores only the event name and date: no cookies, IDs, IP addresses or figures.
   - `GET /api/stats?key=…` shows the totals and the last 30 days (`&format=json` for raw data). It returns 404 unless the `STATS_KEY` secret is set and matches.
 - The stats key is checked against `STATS_KEY_HASH` (a SHA-256 fingerprint) in `wrangler.jsonc`, so it survives every deploy and the key never sits in this public repo. To change the key, put the SHA-256 of the new key there (`printf '%s' 'new-key' | sha256sum`).
 - `public/manifest.webmanifest` and `public/sw.js` make the site installable (Install app button on Chrome/Edge/Android; Add to Home Screen on iPhone) and usable offline. Bump `CACHE` in `sw.js` when core files change.

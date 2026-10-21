@@ -190,3 +190,35 @@ test("OC-08: holiday is compared in weeks off, so 20 days on 4 days a week equal
 test("OC-08: with 5-day weeks, holiday value matches the previous day's-pay rule", () => {
   near(OC.holidayValue(82000, 25, 5, 28, 5), 3 * 82000 / 260, 1e-9);
 });
+
+/* ---------- OC-11 Sign-on bonus and one-off payments ---------- */
+test("OC-11: a £10,000 sign-on on an £82,000 offer adds £5,800 after 40% tax and 2% NI in year one", () => {
+  const c = base(70000), o = base(82000);
+  const without = OC.yearOne(c, o, 0, 0, NET), withSign = OC.yearOne(c, o, 10000, 0, NET);
+  near(withSign - without, 5800);
+  near(without, OC.side(o, NET).net - OC.side(c, NET).net); // no one-offs = the ongoing difference
+});
+
+test("OC-11: a bonus given up by leaving offsets a sign-on of the same size", () => {
+  const c = base(70000), o = base(82000);
+  near(OC.yearOne(c, o, 8000, 8000, NET), OC.yearOne(c, o, 0, 0, NET), 1);
+});
+
+/* ---------- OC-09 Share links ---------- */
+const KEYS = ["cBase", "oBase", "tReg", "view", "tTime"];
+test("OC-09: a share link round-trips figures and settings", () => {
+  const st = { cBase: 70000, oBase: "82000", tReg: "sco", view: "net", tTime: "", qn: { q0: "private note" } };
+  const enc = OC.encodeState(st, KEYS);
+  assert.match(enc, /^v1\.[A-Za-z0-9_-]+$/);
+  assert.deepEqual(OC.decodeState(enc, KEYS), { cBase: 70000, oBase: "82000", tReg: "sco", view: "net" });
+});
+
+test("OC-09: notes and unknown keys never travel, and bad links are rejected", () => {
+  const enc = OC.encodeState({ cBase: 1, qn: { q0: "secret" } }, KEYS);
+  assert.ok(!Buffer.from(enc.slice(3), "base64url").toString().includes("secret"));
+  const evil = "v1." + Buffer.from(JSON.stringify({ cBase: 1, __proto__x: 2, oBase: "x".repeat(500), tReg: { a: 1 } })).toString("base64url");
+  assert.deepEqual(OC.decodeState(evil, KEYS), { cBase: 1 });
+  assert.equal(OC.decodeState("v1.!!!", KEYS), null);
+  assert.equal(OC.decodeState("v2.abc", KEYS), null);
+  assert.equal(OC.decodeState("v1." + "A".repeat(5000), KEYS), null);
+});
