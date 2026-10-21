@@ -78,7 +78,8 @@ code,.num{font-family:var(--mono);font-size:.92em}
 .tip strong{color:var(--accent)}
 .warn{border-left-color:var(--warn);background:var(--warn-bg)}
 .warn strong{color:var(--warn)}
-.qgroups{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.qgroups{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+@media (max-width:640px){.qgroups{grid-template-columns:minmax(0,1fr)}}
 .qg{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px 18px;display:grid;gap:8px;align-content:start;min-width:0}
 .qg h3{margin:0;color:var(--accent);font-size:17px}
 .qg ol{margin:0;padding-left:20px;display:grid;gap:8px;font-size:15px}
@@ -170,7 +171,7 @@ pre{margin:0;background:var(--surface);border:1px solid var(--line);border-radiu
 <section id="recruiter" aria-labelledby="h-recruiter">
   <span class="eyebrow">STEP 2</span>
   <h2 class="step" id="h-recruiter">Ask the recruiter before you touch the offer</h2>
-  <p>Most offers look better or worse than they are because a few answers are missing. Work through these 12 questions, tick each one off and note what the recruiter says. Their answers feed straight into Step 3.</p>
+  <p>Most offers look better or worse than they are because a few answers are missing. Work through these 18 questions, tick each one off and note what the recruiter says. Their answers feed straight into Step 3.</p>
   <div class="qgroups">
     <div class="qg"><h3>The role</h3><ol>
       <li>Who is the employer, and is the role in-house or placed with a client?<span>Client placements can end with the contract.</span></li>
@@ -182,13 +183,21 @@ pre{margin:0;background:var(--surface);border:1px solid var(--line);border-radiu
     </ol></div>
     <div class="qg"><h3>The money</h3><ol start="7">
       <li>What is the salary band?<span>Get this before you name any number.</span></li>
-      <li>What is the employer pension, and is it matched?<span>A 10% vs 3% pension is a 7% swing in real pay.</span></li>
+      <li>What is the employer pension: core %, match, basis, and is it salary sacrifice?<span>A 10% vs 3% pension is a 7% swing in real pay.</span></li>
       <li>What is the bonus target, and what has it actually paid?<span>Decides "bonus you can count on".</span></li>
       <li>Is the band flexible for specialist experience?<span>Shows room to negotiate.</span></li>
     </ol></div>
     <div class="qg"><h3>The safety net</h3><ol start="11">
       <li>Holiday, sick pay and private medical terms?<span>Often weaker outside large employers.</span></li>
       <li>Notice period, and redundancy or redeployment terms?<span>Matters most for client-placed roles.</span></li>
+    </ol></div>
+    <div class="qg"><h3>Terms and risk</h3><ol start="13">
+      <li>How long is probation, and the notice period during it?<span>Less security in your first months.</span></li>
+      <li>What enhanced parental leave and pay is offered?<span>Statutory pay is much lower.</span></li>
+      <li>When is the next pay review, and what were the last two rises?<span>Flat pay loses value every year.</span></li>
+      <li>Is it permanent, fixed-term, or tied to a client or funding?<span>If not permanent, raise your decision lines.</span></li>
+      <li>Any non-compete or non-solicit clauses?<span>Ask to see the clause before signing.</span></li>
+      <li>Is there a sign-on or buy-out bonus, and is it repayable?<span>Goes in "One-off payments".</span></li>
     </ol></div>
   </div>
   <div class="tip"><strong>Tip:</strong> If you're pushed for your expectations before you have the band, say you'd like to understand the full package first. Once you've named a number, it's hard to move up from it.</div>
@@ -203,10 +212,13 @@ pre{margin:0;background:var(--surface);border:1px solid var(--line);border-radiu
       <thead><tr><th>Offer field</th><th>Comes from question</th><th>How to enter it</th></tr></thead>
       <tbody>
         <tr><td>Base salary</td><td>7, 10</td><td>The figure actually offered. If you only have a band, test the bottom of it first.</td></tr>
-        <tr><td>Employer pension %</td><td>8</td><td>The core contribution. Put matching, the basis and salary sacrifice in the optional pension section.</td></tr>
+        <tr><td>Employer pension %</td><td>8</td><td>The core contribution only.</td></tr>
+        <tr><td>Your pension, matching and salary sacrifice</td><td>8</td><td>What you'd pay in, how far they match it, full salary or qualifying earnings, and whether it's salary sacrifice. Ask whether they pass on their National Insurance saving.</td></tr>
         <tr><td>Bonus %</td><td>9</td><td>The stated target.</td></tr>
         <tr><td>Bonus you can count on</td><td>9</td><td><em>Half</em> or <em>None</em> unless they can show what it actually paid recently.</td></tr>
         <tr><td>Allowances, medical, holiday</td><td>11</td><td>The same way you entered your own.</td></tr>
+        <tr><td>One-off payments</td><td>18</td><td>The sign-on or buy-out bonus, and the months you'd have to stay to keep it.</td></tr>
+        <tr><td>Working days and contracted hours</td><td>2, 4</td><td>From the offer letter. For a four-day week, enter 4 days and the holiday as they state it.</td></tr>
         <tr><td>Commute cost and hours</td><td>2</td><td>Based on their office-day expectation, not what you hope to negotiate.</td></tr>
       </tbody>
     </table>
@@ -228,6 +240,20 @@ pre{margin:0;background:var(--surface);border:1px solid var(--line);border-radiu
     </table>
   </div>
   <p>Only lower them if the move is clearly a career step you want for its own sake, and be honest with yourself when you do.</p>
+  <h3>Your circumstances</h3>
+  <p>The same panel holds a few settings about you rather than the job. They apply to both columns.</p>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Setting</th><th>What it does</th></tr></thead>
+      <tbody>
+        <tr><td>Where you pay income tax</td><td>England, Wales or NI, or Scotland, which has different bands.</td></tr>
+        <tr><td>Value of an hour of your time</td><td>Optional. Turns commute time saved or lost into money. The box suggests your current hourly rate as a starting point.</td></tr>
+        <tr><td>Student loan and postgraduate loan</td><td>Takes repayments off your pay after tax. Your plan is on your payslip.</td></tr>
+        <tr><td>Children you get Child Benefit for</td><td>Appears only if either package takes you over £60,000. Includes the Child Benefit charge in the figures.</td></tr>
+        <tr><td>Tax-Free Childcare or funded hours</td><td>Appears only over £100,000, where you'd lose them. Flagged, not priced.</td></tr>
+      </tbody>
+    </table>
+  </div>
 </section>
 
 <section id="verdict" aria-labelledby="h-verdict">
@@ -240,31 +266,52 @@ pre{margin:0;background:var(--surface);border:1px solid var(--line);border-radiu
     <div class="v v-good"><b>Consider</b><small>"consider" to "strong yes"</small><p>Fair reward for the move. Weigh up the role itself.</p></div>
     <div class="v v-good"><b>Strong yes</b><small>above "strong yes"</small><p>A clear financial step up.</p></div>
   </div>
+  <h3>The figures under the verdict</h3>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Line</th><th>What it tells you</th></tr></thead>
+      <tbody>
+        <tr><td>Take-home up or down a month</td><td>The change you'd feel in your bank account: regular pay after tax, National Insurance, student loan and your pension, before any bonus.</td></tr>
+        <tr><td>Hourly rate, all in</td><td>Each package after tax and commute cost, divided by contracted plus commute hours. Shows when more money means a worse deal per hour.</td></tr>
+        <tr><td>Full-time equivalent salary</td><td>Shown when either side isn't a five-day week, so you can compare the rate of pay.</td></tr>
+        <tr><td>Year one, with one-off payments</td><td>The first year including a sign-on and any bonus you give up by leaving. Never part of the verdict.</td></tr>
+        <tr><td>Notes in orange or green</td><td>The 60% tax band between £100,000 and £125,140, the Child Benefit charge, lost childcare support, the 2029 salary sacrifice cap, and sign-on repayment terms.</td></tr>
+      </tbody>
+    </table>
+  </div>
   <h3>Use "Base salary you need" to negotiate</h3>
   <p>This table shows the base salary that would lift the offer to each line, given its pension and bonus. If the verdict is break-even, the "Consider" figure is your counter-offer. Then use <strong>Copy summary</strong> to keep your numbers and the recruiter's answers together.</p>
+  <h3>Share or come back later</h3>
+  <p>Your figures save in this browser as you type. <strong>Copy link</strong> makes a link with your figures in it, to open on another device or send to someone you trust. Tap it twice: the first tap reminds you it includes your salary. Your notes on the recruiter's answers are never included. If someone opens your link, their own figures are kept aside and one tap brings them back.</p>
 </section>
 
 <section id="maths" aria-labelledby="h-maths">
   <span class="eyebrow">REFERENCE</span>
   <h2 class="step" id="h-maths">How it's calculated</h2>
 <pre>Total value = base salary
-            + employer pension
+            + employer pension (core + match)
             + bonus × the share you can count on
             + allowances + private medical
 
 Offer total also adds:
-            + holiday difference × (offer base ÷ 260)
+            + extra weeks off × a week of offer pay
+              (weeks off = holiday days ÷ working days a week)
             + commute cost saved (or minus extra cost)
+            + commute hours saved × 46 × your £ per hour, if set
+
+Year one    = the above + sign-on − bonus given up, after tax
+Hourly rate = value after tax − commute cost
+              ÷ ((contracted + commute hours) × weeks worked)
 
 Break-even  = today's total value
 Consider    = today's total × (1 + consider uplift)
 Strong yes  = today's total × (1 + strong-yes uplift)</pre>
   <h3>After tax (the default view)</h3>
-  <p>The result panel opens on <strong>After tax</strong>, because a pound of salary and a pound of employer pension aren't worth the same. Salary, bonus, allowances and holiday value lose 2026/27 income tax and employee National Insurance. Medical cover loses income tax, as a taxable benefit. Employer pension is counted in full, because it's paid in before tax. Pick England, Wales or NI, or Scotland, and your student loan plan, in step 3.</p>
-  <p>Under the verdict you'll see how your <strong>monthly take-home</strong> changes: regular pay after tax, National Insurance, student loan and your own pension, before any bonus. If the offer takes your income over £60,000 or £100,000, step 3 asks about Child Benefit and childcare, and the result panel flags the 60% tax band, the Child Benefit charge and the loss of Tax-Free Childcare.</p>
+  <p>The result panel opens on <strong>After tax</strong>, because a pound of salary and a pound of employer pension aren't worth the same. Salary, bonus, allowances and holiday value lose 2026/27 income tax and employee National Insurance. Medical cover loses income tax, as a taxable benefit. Employer pension is counted in full, because it's paid in before tax. Your own pension contribution gets income tax relief, and saves National Insurance too if it's salary sacrifice. Pick where you pay tax and your student loan plan alongside your decision lines.</p>
+  <p>Under the verdict you'll see how your <strong>monthly take-home</strong> changes: regular pay after tax, National Insurance, student loan and your own pension, before any bonus. If either package takes your income over £60,000 or £100,000, the app asks about Child Benefit and childcare, and the result panel flags the 60% tax band, the Child Benefit charge and the loss of Tax-Free Childcare.</p>
   <p>For a higher-rate taxpayer, you keep about 58p of each extra £1 of salary, but all of each £1 of employer pension. So an offer that swaps pension for salary can look better before tax and be worse after it. Switch to <strong>Before tax</strong> to compare headline packages.</p>
   <p>Not included: other income, non-standard tax codes, bonus sacrifice, and tax you'll pay when you draw your pension. The results are illustrative estimates, not financial or tax advice.</p>
-  <p>Everything you enter stays in your own browser. Nothing is sent anywhere.</p>
+  <p>Everything you enter stays in your own browser. Nothing is sent to us, even when you use Copy link: the figures sit in the part of the link after #, which browsers don't send to websites.</p>
 </section>
 
 </main>
