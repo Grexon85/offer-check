@@ -12,12 +12,12 @@ Ordered roughly by value. Move items to "Done" as they ship.
 
 - [ ] Export the summary as a file users can keep (the in-app copy button works today).
 - [ ] Share link for a summary without exposing personal figures.
-- [ ] Optional cash value for commute time (£/hour).
 - [ ] Equity / share scheme field with a vesting discount.
 - [ ] Accessibility review (keyboard flow, screen reader labels on the scale bar).
 
 ## Done
 
+- [x] P1 time value: working days and contracted hours per side, holiday compared in weeks off, full-time-equivalent salary, all-in hourly rate, optional £ value for commute time.
 - [x] P0 tax accuracy: your own pension and employer matching, salary sacrifice (with NI pass-back and the 2029 cap note), student loans, monthly take-home change, and warnings for the £100k taper, Child Benefit charge and childcare. Engine moved to `assets/calc.js` with unit tests.
 - [x] Guide page (`guide.html`) with narrated walkthrough video, field-by-field instructions and verdict guide; linked from the app header.
 - [x] v1: current vs offer inputs, 12 recruiter questions with notes, decision lines, base-needed table, copyable summary.

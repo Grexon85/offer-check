@@ -162,6 +162,12 @@ details.more .cols{margin-top:12px}
     <label for="cHol">Holiday days<small>Excluding bank holidays</small></label>
     <input type="number" id="cHol" min="0" step="1"><input type="number" id="oHol" min="0" step="1">
 
+    <label for="cDays">Working days per week<small>4 for a four-day week or part-time</small></label>
+    <input type="number" id="cDays" min="1" max="7" step="0.5"><input type="number" id="oDays" min="1" max="7" step="0.5">
+
+    <label for="cCHrs">Contracted hours per week<small>From the contract; add usual unpaid extra if it's routine</small></label>
+    <input type="number" id="cCHrs" min="0" step="0.5"><input type="number" id="oCHrs" min="0" step="0.5">
+
     <label for="cCom">Commute cost per year<small>Fuel, parking, tickets</small></label>
     <div class="money"><span>£</span><input type="number" id="cCom" min="0" step="100"></div>
     <div class="money"><span>£</span><input type="number" id="oCom" min="0" step="100"></div>
@@ -208,11 +214,13 @@ details.more .cols{margin-top:12px}
     <label for="tCon">"Consider" uplift %<input type="number" id="tCon" min="0" step="1"></label>
     <label for="tStr">"Strong yes" uplift %<input type="number" id="tStr" min="0" step="1"></label>
     <label for="tReg">Where you pay income tax<select id="tReg"><option value="ruk">England, Wales or NI</option><option value="sco">Scotland</option></select></label>
+    <label for="tTime">Value of an hour of your time, £<input type="number" id="tTime" min="0" step="1" placeholder="Optional"></label>
     <label for="tLoan">Student loan<select id="tLoan"><option value="none">None</option><option value="p1">Plan 1</option><option value="p2">Plan 2</option><option value="p4">Plan 4 (Scotland)</option><option value="p5">Plan 5</option></select></label>
     <label for="tPg">Postgraduate loan<select id="tPg"><option value="no">No</option><option value="yes">Yes</option></select></label>
     <label for="tKids" id="kidsWrap" hidden>Children you get Child Benefit for<select id="tKids"><option value="0">None</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></label>
     <label for="tCare" id="careWrap" hidden>Use Tax-Free Childcare or funded hours?<select id="tCare"><option value="no">No</option><option value="yes">Yes</option></select></label>
   </div>
+  <p class="note" id="timeNote">Leave the hour value blank to show commute time without a cash value. A common starting point is your hourly rate after tax.</p>
   <p class="note" id="circNote" hidden>Asked because your pay crosses £60,000 or £100,000, where Child Benefit and childcare support start to fall away.</p>
 </section>
 </main>
@@ -237,7 +245,8 @@ details.more .cols{margin-top:12px}
   </div>
   <div class="panel">
     <strong>How this is worked out</strong>
-    <p class="note"><b>Total value</b> = base + employer pension (core plus any match) + the part of the bonus you can count on + allowances + medical. The offer also gains or loses the value of any holiday difference (a day's pay per day) and any change in commute cost. Commute time is shown but not given a cash value.</p>
+    <p class="note"><b>Total value</b> = base + employer pension (core plus any match) + the part of the bonus you can count on + allowances + medical. The offer also gains or loses the value of any holiday difference (a day's pay per day) and any change in commute cost. Commute time is given a cash value only if you set what an hour of your time is worth in step 3. Holiday is compared in weeks off, so a four-day week's 20 days equals a five-day week's 25.</p>
+    <p class="note"><b>Hourly rate, all in</b> = each package after tax, less its commute cost, divided by contracted plus commute hours over the weeks you work (after holiday and 8 bank holidays).</p>
     <p class="note"><b>After tax</b> takes off 2026/27 income tax, employee National Insurance and any student loan from salary, bonus, allowances and holiday value, and income tax from medical cover (a taxable benefit). Your own pension contribution gets income tax relief, and also saves National Insurance if it's by salary sacrifice; it counts in full as value because it's still your money. Employer pension is counted in full because it's paid in before tax, though you'll pay some tax when you draw it. Commute costs come from taxed pay, so they count in full.</p>
     <p class="note"><b>Monthly take-home</b> is regular pay (salary and allowances) after tax, National Insurance, student loan and your pension, before any bonus.</p>
     <p class="note">Not included: other income, non-standard tax codes, bonus sacrifice, and tax you'll pay when you draw your pension. Figures are illustrative estimates, not financial or tax advice.</p>
@@ -253,7 +262,7 @@ details.more .cols{margin-top:12px}
 </footer>
 </div>
 
-<script src="/assets/calc.js?v=1"></script>
+<script src="/assets/calc.js?v=2"></script>
 <script>
 const QUESTIONS=[
  ["The role",[
@@ -273,12 +282,13 @@ const QUESTIONS=[
   ["What is the notice period, and are there redundancy or redeployment terms?","Matters most for client-placed or contract-dependent roles."]]]
 ];
 /* Defaults for fields added after launch, so saved figures from earlier visits keep giving the same result. */
-const DEF={cEe:"",oEe:"",cMatch:"",oMatch:"",cBasis:"full",oBasis:"full",cSac:"no",oSac:"no",cPass:"no",oPass:"no",tLoan:"none",tPg:"no",tKids:"0",tCare:"no"};
+const DEF={cEe:"",oEe:"",cMatch:"",oMatch:"",cBasis:"full",oBasis:"full",cSac:"no",oSac:"no",cPass:"no",oPass:"no",tLoan:"none",tPg:"no",tKids:"0",tCare:"no",
+  cDays:5,oDays:5,cCHrs:37.5,oCHrs:37.5,tTime:""};
 const SAMPLE={cBase:70000,oBase:82000,cPen:10,oPen:3,cBon:10,oBon:8,cRel:"1",oRel:"0.5",cAllow:0,oAllow:0,cMed:0,oMed:600,cHol:25,oHol:25,cCom:2400,oCom:1500,cHrs:7.5,oHrs:5,
-  cEe:5,oEe:5,cMatch:0,oMatch:3,cBasis:"full",oBasis:"full",cSac:"yes",oSac:"no",cPass:"no",oPass:"no",
-  tCon:10,tStr:20,tReg:"ruk",tLoan:"none",tPg:"no",tKids:"0",tCare:"no",view:"net",qa:{},qn:{}};
-const ids=["cBase","oBase","cPen","oPen","cBon","oBon","cRel","oRel","cAllow","oAllow","cMed","oMed","cHol","oHol","cCom","oCom","cHrs","oHrs",
-  "cEe","oEe","cMatch","oMatch","cBasis","oBasis","cSac","oSac","cPass","oPass","tCon","tStr","tReg","tLoan","tPg","tKids","tCare"];
+  cEe:5,oEe:5,cMatch:0,oMatch:3,cBasis:"full",oBasis:"full",cSac:"yes",oSac:"no",cPass:"no",oPass:"no",cDays:5,oDays:5,cCHrs:37.5,oCHrs:37.5,
+  tCon:10,tStr:20,tReg:"ruk",tLoan:"none",tPg:"no",tKids:"0",tCare:"no",tTime:"",view:"net",qa:{},qn:{}};
+const ids=["cBase","oBase","cPen","oPen","cBon","oBon","cRel","oRel","cAllow","oAllow","cMed","oMed","cHol","oHol","cDays","oDays","cCHrs","oCHrs","cCom","oCom","cHrs","oHrs",
+  "cEe","oEe","cMatch","oMatch","cBasis","oBasis","cSac","oSac","cPass","oPass","tCon","tStr","tReg","tTime","tLoan","tPg","tKids","tCare"];
 const KEY="offer-check-v1";
 let st;
 try{st=JSON.parse(localStorage.getItem(KEY))}catch(e){}
@@ -320,8 +330,15 @@ function opts(net){return {net,reg:reg(),loan:st.tLoan,pg:st.tPg==="yes",kids:n(
 function params(p,base){
   return {base,empPct:n(p+"Pen"),matchCap:n(p+"Match"),eePct:n(p+"Ee"),basis:st[p+"Basis"],sac:st[p+"Sac"]==="yes",passNI:st[p+"Pass"]==="yes",
     bonPct:n(p+"Bon"),rel:parseFloat(st[p+"Rel"]),allow:n(p+"Allow"),med:n(p+"Med"),
-    extraCash:p==="o"?(n("oHol")-n("cHol"))/260*base:0,commute:p==="o"?n("cCom")-n("oCom"):0};
+    extraCash:p==="o"?OC.holidayValue(base,n("cHol"),n("cDays"),n("oHol"),n("oDays")):0,
+    commute:p==="o"?n("cCom")-n("oCom")+OC.timeValue(n("cHrs"),n("oHrs"),n("tTime")):0};
 }
+/* Effective hourly rate for one side: its own package after tax, less its own commute cost, over every hour it takes. */
+function hourlyRate(p,base){
+  const v=OC.side(Object.assign(params(p,base),{extraCash:0,commute:0}),opts(true)).net;
+  return OC.hourly({value:v,commuteCost:n(p+"Com"),contracted:n(p+"CHrs"),commuteHrs:n(p+"Hrs"),hol:n(p+"Hol"),d:n(p+"Days")});
+}
+const gbp2=v=>"£"+v.toLocaleString("en-GB",{minimumFractionDigits:2,maximumFractionDigits:2});
 /* One side's value. p = "c" (current) or "o" (offer). */
 const value=(p,base,net)=>OC.side(params(p,base),opts(net));
 const monthly=(p,base)=>OC.monthly(params(p,base),opts(true));
@@ -358,9 +375,17 @@ function calc(){
   else if(cb){mEl.innerHTML=`<b></b>`;mEl.children[0].textContent=`Take-home today: ${gbp(mC)} a month`}
 
   const lab=net?"value after tax":"total value";
-  const hrsSaved=(n("cHrs")-n("oHrs"))*46;
+  const hrsSaved=(n("cHrs")-n("oHrs"))*R.COMMUTE_WEEKS;
+  const tv=OC.timeValue(n("cHrs"),n("oHrs"),n("tTime"));
+  const hC=cb?hourlyRate("c",cb):NaN,hO=ob?hourlyRate("o",ob):NaN;
+  const fteRow=n("cDays")&&n("cDays")!==5||n("oDays")&&n("oDays")!==5;
+  const pair=(a,b,f)=>isFinite(a)?(isFinite(b)?`${f(a)} → ${f(b)}`:f(a)):"—";
   document.getElementById("totals").innerHTML=
-   `<span>Today's ${lab}</span><b>${gbp(cur)}</b><span>Offer ${lab}</span><b>${ob?gbp(off):"—"}</b><span>Difference</span><b>${ob?(diff>=0?"+":"−")+gbp(Math.abs(diff)):"—"}</b><span>Commute time saved</span><b>${hrsSaved>=0?"":"−"}${Math.abs(Math.round(hrsSaved))} hrs/yr</b>`;
+   `<span>Today's ${lab}</span><b>${gbp(cur)}</b><span>Offer ${lab}</span><b>${ob?gbp(off):"—"}</b><span>Difference</span><b>${ob?(diff>=0?"+":"−")+gbp(Math.abs(diff)):"—"}</b>`+
+   `<span>Commute time saved${n("tTime")?` (${tv>=0?"+":"−"}${gbp(Math.abs(tv))} counted)`:""}</span><b>${hrsSaved>=0?"":"−"}${Math.abs(Math.round(hrsSaved))} hrs/yr</b>`+
+   `<span>Hourly rate, all in</span><b>${pair(hC,hO,gbp2)}</b>`+
+   (fteRow?`<span>Full-time equivalent salary</span><b>${pair(cb?OC.fte(cb,n("cDays")):NaN,ob?OC.fte(ob,n("oDays")):NaN,gbp)}</b>`:"");
+  document.getElementById("tTime").placeholder=isFinite(hC)&&hC>0?`Optional, e.g. ${gbp(hC)}`:"Optional";
 
   const loanTxt=st.tLoan!=="none"||st.tPg==="yes"?", student loan":"";
   document.getElementById("basis").textContent=net
@@ -408,7 +433,7 @@ function calc(){
   tb.innerHTML=need.map(([l,t,b])=>`<tr><td>${l}</td><td>${gbp(t)}</td><td>${isFinite(b)?gbp(b):"—"}</td></tr>`).join("");
   const erTxt=+O.erPct.toFixed(2);
   document.getElementById("needNote").textContent=`At the offer's ${erTxt}% employer pension and ${n("oBon")}% bonus (counting ${st.oRel==="1"?"all":st.oRel==="0.5"?"half":"none"} of it)${net?", after tax":""}. Change those in step 1 to test other answers.`;
-  last={cur,off,con,str,diff,pct,verdict:v[0],ob,cb,hrsSaved,need,net,reg:reg(),mC,mO,mD};
+  last={cur,off,con,str,diff,pct,verdict:v[0],ob,cb,hrsSaved,need,net,reg:reg(),mC,mO,mD,hC,hO,tv};
   if(!sentCompare&&cb&&ob&&document.getElementById("sampleTag").hidden){sentCompare=true;window.ocTrack&&ocTrack("compare")}
 }
 document.getElementById("vNet").addEventListener("click",()=>{st.view="net";save();calc()});
@@ -416,7 +441,7 @@ document.getElementById("vGross").addEventListener("click",()=>{st.view="gross";
 
 document.getElementById("clearBtn").addEventListener("click",()=>{
   /* Keep personal circumstances (tax region, loans, children); reset everything about the two packages. */
-  const keep=["tReg","tLoan","tPg","tKids","tCare"];
+  const keep=["tReg","tLoan","tPg","tKids","tCare","tTime"];
   ids.forEach(i=>{if(keep.includes(i))return;st[i]=(i==="cRel"||i==="oRel")?"1":i==="tCon"?10:i==="tStr"?20:i in DEF?DEF[i]:""});
   st.qa={};st.qn={};
   ids.forEach(i=>document.getElementById(i).value=st[i]);
@@ -432,6 +457,8 @@ document.getElementById("copyBtn").addEventListener("click",()=>{
   let t=`Offer check\nBasis: ${L.net?"after "+R.year+" income tax ("+R.TAX[L.reg].label+")"+loan:"before tax"}. Illustrative estimate, not financial advice.\nVerdict: ${L.verdict}\nToday's ${lab}: ${gbp(L.cur)}\nOffer ${lab}: ${L.ob?gbp(L.off):"not yet known"}\n`;
   if(L.ob)t+=`Difference: ${L.diff>=0?"+":"-"}${gbp(Math.abs(L.diff))} (${L.pct.toFixed(1)}%)\n`;
   if(L.cb)t+=`Monthly take-home (regular pay, before bonus): ${gbp(L.mC)} today${L.ob?`, ${gbp(L.mO)} with the offer (${L.mD>=0?"+":"-"}${gbp(Math.abs(L.mD))})`:""}\n`;
+  if(isFinite(L.hC))t+=`Hourly rate, all in (after tax, incl. commute time): ${gbp2(L.hC)} today${isFinite(L.hO)?`, ${gbp2(L.hO)} with the offer`:""}\n`;
+  if(n("tTime"))t+=`Commute time valued at ${gbp(n("tTime"))}/hr: ${L.tv>=0?"+":"-"}${gbp(Math.abs(L.tv))} a year for the offer\n`;
   ["taperNote","careNote","cbNote","sacNote"].forEach(id=>{const el=document.getElementById(id);if(!el.hidden)t+=`Note: ${el.textContent}\n`});
   t+=`Base needed: ${L.need.map(([l,,b])=>l.toLowerCase()+" "+(isFinite(b)?gbp(b):"n/a")).join(", ")}\n\nRecruiter answers:\n`;
   let i=0;QUESTIONS.forEach(([g,list])=>list.forEach(([q])=>{const id="q"+(i++);t+=`${st.qa[id]?"[x]":"[ ]"} ${q}${st.qn[id]?"\n    "+st.qn[id]:""}\n`}));

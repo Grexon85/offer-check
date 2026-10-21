@@ -23,7 +23,9 @@
     PG: [21000, .06],                                             // postgraduate loan, can sit alongside one plan above
     CB_FIRST: 1406.60, CB_EXTRA: 930.80,                          // Child Benefit per year
     HICBC_START: 60000, HICBC_END: 80000,                         // charge: 1% of Child Benefit per £200 over the start
-    TFC_PER_CHILD: 2000                                           // Tax-Free Childcare top-up, max per child per year
+    TFC_PER_CHILD: 2000,                                          // Tax-Free Childcare top-up, max per child per year
+    BANK_HOLS: 8,                                                 // England and Wales; used for working weeks
+    COMMUTE_WEEKS: 46                                             // weeks a year you actually travel
   };
 
   const clamp = (x, lo, hi) => Math.min(hi, Math.max(lo, x));
@@ -137,7 +139,34 @@
     return hi;
   }
 
-  const OC = { RATES, incomeTax, employeeNI, studentLoan, childBenefit, hicbc, pensionable, side, monthly, traps, sacCapCost, baseFor };
+  /* ---------- Time: days, hours, holiday ---------- */
+  const days = d => clamp(+d || 5, 1, 7);
+
+  /* Full-time-equivalent salary (5-day week). */
+  const fte = (base, d) => base * 5 / days(d);
+
+  /* Value of the offer's holiday difference. Holiday is compared in weeks off (days ÷ days worked a week),
+     priced at a week of the offer's pay. With 5-day weeks on both sides this equals (oHol − cHol) × base ÷ 260. */
+  function holidayValue(offerBase, cHol, cDays, oHol, oDays) {
+    const weeks = (+oHol || 0) / days(oDays) - (+cHol || 0) / days(cDays);
+    return weeks * offerBase / 52;
+  }
+
+  /* Weeks actually worked: 52 less holiday and bank holidays, both in weeks of that side's working pattern. */
+  const workingWeeks = (hol, d) => Math.max(1, 52 - ((+hol || 0) + RATES.BANK_HOLS) / days(d));
+
+  /* Effective hourly rate: what the package is worth after tax, less your own commute cost,
+     divided by every hour it takes (contracted hours + commute) across the weeks you work. */
+  function hourly({ value, commuteCost, contracted, commuteHrs, hol, d }) {
+    const hours = ((+contracted || 0) + (+commuteHrs || 0)) * workingWeeks(hol, d);
+    return hours > 0 ? (value - (+commuteCost || 0)) / hours : NaN;
+  }
+
+  /* Cash value of commute time saved by the offer (negative if it costs you time). */
+  const timeValue = (cHrs, oHrs, perHour) => ((+cHrs || 0) - (+oHrs || 0)) * RATES.COMMUTE_WEEKS * (+perHour || 0);
+
+  const OC = { RATES, incomeTax, employeeNI, studentLoan, childBenefit, hicbc, pensionable, side, monthly, traps, sacCapCost, baseFor,
+    fte, holidayValue, workingWeeks, hourly, timeValue };
   g.OC = OC;
   if (typeof module !== "undefined" && module.exports) module.exports = OC;
 })(typeof window !== "undefined" ? window : globalThis);

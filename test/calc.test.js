@@ -151,3 +151,42 @@ test("baseFor finds the base that hits a target", () => {
   const b = OC.baseFor(at(64321), at);
   near(b, 64321, 0.5);
 });
+
+/* ---------- OC-06 Commute time valued in £ ---------- */
+test("OC-06: blank hour value keeps today's behaviour (no cash value)", () => {
+  assert.equal(OC.timeValue(7.5, 5, ""), 0);
+  assert.equal(OC.timeValue(7.5, 5, 0), 0);
+});
+
+test("OC-06: 2.5 hours a week saved at £20/hr is worth £2,300 a year (46 weeks)", () => {
+  assert.equal(OC.timeValue(7.5, 5, 20), 2300);
+  assert.equal(OC.timeValue(5, 7.5, 20), -2300);
+});
+
+/* ---------- OC-07 Effective hourly rate ---------- */
+test("OC-07: hourly rate = (value − commute cost) ÷ ((contracted + commute hours) × working weeks)", () => {
+  // 25 days holiday + 8 bank holidays on a 5-day week = 6.6 weeks off, so 45.4 weeks worked
+  near(OC.workingWeeks(25, 5), 45.4, 1e-9);
+  const h = OC.hourly({ value: 50000, commuteCost: 2000, contracted: 37.5, commuteHrs: 5, hol: 25, d: 5 });
+  near(h, 48000 / (42.5 * 45.4), 1e-9);
+});
+
+test("OC-07: a long commute lowers the hourly rate even at equal pay", () => {
+  const a = OC.hourly({ value: 50000, commuteCost: 0, contracted: 37.5, commuteHrs: 2, hol: 25, d: 5 });
+  const b = OC.hourly({ value: 50000, commuteCost: 0, contracted: 37.5, commuteHrs: 10, hol: 25, d: 5 });
+  assert.ok(b < a);
+});
+
+/* ---------- OC-08 Part-time and four-day week ---------- */
+test("OC-08: a 4-day offer at £48,000 shows a full-time equivalent of £60,000", () => {
+  assert.equal(OC.fte(48000, 4), 60000);
+  assert.equal(OC.fte(48000, ""), 48000); // blank = 5 days
+});
+
+test("OC-08: holiday is compared in weeks off, so 20 days on 4 days a week equals 25 on 5", () => {
+  near(OC.holidayValue(48000, 25, 5, 20, 4), 0, 1e-9);
+});
+
+test("OC-08: with 5-day weeks, holiday value matches the previous day's-pay rule", () => {
+  near(OC.holidayValue(82000, 25, 5, 28, 5), 3 * 82000 / 260, 1e-9);
+});
