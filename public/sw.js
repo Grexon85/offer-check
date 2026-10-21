@@ -1,7 +1,7 @@
 // Offer Check service worker: makes the site installable and usable offline.
 // Pages: network first (always fresh), falling back to the last copy. Assets: cache first.
-const CACHE = "offer-check-v1";
-const CORE = ["/", "/guide", "/assets/site.css?v=3", "/assets/icon.svg",
+const CACHE = "offer-check-v2";
+const CORE = ["/", "/guide", "/assets/site.css?v=3", "/assets/calc.js?v=1", "/assets/icon.svg",
   "/assets/fonts/plus-jakarta-sans-latin-400-normal.woff2", "/assets/fonts/plus-jakarta-sans-latin-600-normal.woff2",
   "/assets/fonts/plus-jakarta-sans-latin-700-normal.woff2", "/assets/fonts/plus-jakarta-sans-latin-800-normal.woff2"];
 

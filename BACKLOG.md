@@ -6,7 +6,6 @@ Ordered roughly by value. Move items to "Done" as they ship.
 
 - [ ] **Guidance next to judgement fields.** Typical pension and bonus norms by employer type (bank, big tech, consultancy, public sector, start-up), so users don't set bonus reliability or uplift lines optimistically.
 - [ ] **Employer type picker** that pre-sets suggested uplift lines (e.g. higher for client-placed or contract-dependent roles).
-- [ ] **Salary sacrifice and tax view.** Show take-home pay difference, not just gross value (UK income tax and NI bands).
 - [ ] **Compare multiple offers** side by side.
 
 ## Later
@@ -19,5 +18,6 @@ Ordered roughly by value. Move items to "Done" as they ship.
 
 ## Done
 
+- [x] P0 tax accuracy: your own pension and employer matching, salary sacrifice (with NI pass-back and the 2029 cap note), student loans, monthly take-home change, and warnings for the £100k taper, Child Benefit charge and childcare. Engine moved to `assets/calc.js` with unit tests.
 - [x] Guide page (`guide.html`) with narrated walkthrough video, field-by-field instructions and verdict guide; linked from the app header.
 - [x] v1: current vs offer inputs, 12 recruiter questions with notes, decision lines, base-needed table, copyable summary.
