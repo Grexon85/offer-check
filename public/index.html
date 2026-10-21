@@ -98,6 +98,13 @@ td{font-family:var(--mono)}
 .seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.12)}
 .basis{font-size:12px;color:var(--muted);margin:0;line-height:1.45}
 .alert{font-size:13px;background:var(--warn-bg);color:var(--warn);border-radius:6px;padding:8px 10px;margin:0}
+.info{font-size:13px;background:var(--accent-soft);color:var(--accent-strong);border-radius:6px;padding:8px 10px;margin:0}
+.monthly{margin:0;font-size:13px;color:var(--muted)}
+.monthly b{display:block;font-family:var(--display);font-size:17px;color:var(--ink);font-weight:700}
+details.more{border-top:1px solid var(--line);padding-top:12px}
+details.more summary{cursor:pointer;font-weight:600;color:var(--accent);list-style-position:inside}
+details.more summary small{display:block;font-weight:400;color:var(--muted);font-size:13px;margin-left:1.2em}
+details.more .cols{margin-top:12px}
 </style>
 
 <link rel="manifest" href="/manifest.webmanifest">
@@ -134,7 +141,7 @@ td{font-family:var(--mono)}
     <div class="money"><span>£</span><input type="number" id="cBase" min="0" step="500"></div>
     <div class="money"><span>£</span><input type="number" id="oBase" min="0" step="500"></div>
 
-    <label for="cPen">Employer pension %<small>Employer's own contribution only</small></label>
+    <label for="cPen">Employer pension %<small>Employer's core contribution, paid whatever you put in</small></label>
     <input type="number" id="cPen" min="0" step="0.5"><input type="number" id="oPen" min="0" step="0.5">
 
     <label for="cBon">Bonus %<small>Typical payout today; target for the offer</small></label>
@@ -162,6 +169,30 @@ td{font-family:var(--mono)}
     <label for="cHrs">Commute hours per week<small>Round trip, all office days</small></label>
     <input type="number" id="cHrs" min="0" step="0.5"><input type="number" id="oHrs" min="0" step="0.5">
   </div>
+  <details class="more" id="morePen">
+    <summary>Your pension, matching and salary sacrifice<small>Optional. Makes take-home and pension value exact when an employer matches what you pay in.</small></summary>
+    <div class="cols">
+      <span class="h first"></span><span class="h">Current</span><span class="h">Offer</span>
+
+      <label for="cEe">Your pension %<small>What you pay in from your pay</small></label>
+      <input type="number" id="cEe" min="0" step="0.5"><input type="number" id="oEe" min="0" step="0.5">
+
+      <label for="cMatch">Employer matches you up to %<small>Extra on top of the core %, pound for pound</small></label>
+      <input type="number" id="cMatch" min="0" step="0.5"><input type="number" id="oMatch" min="0" step="0.5">
+
+      <label for="cBasis">Pension worked out on<small>Qualifying earnings = pay between £6,240 and £50,270</small></label>
+      <select id="cBasis"><option value="full">Full salary</option><option value="qe">Qualifying earnings</option></select>
+      <select id="oBasis"><option value="full">Full salary</option><option value="qe">Qualifying earnings</option></select>
+
+      <label for="cSac">Paid by salary sacrifice<small>Saves National Insurance on your contribution</small></label>
+      <select id="cSac"><option value="no">No</option><option value="yes">Yes</option></select>
+      <select id="oSac"><option value="no">No</option><option value="yes">Yes</option></select>
+
+      <label for="cPass">Employer adds its NI saving<small>Some pass their 15% saving into your pension</small></label>
+      <select id="cPass"><option value="no">No</option><option value="yes">Yes</option></select>
+      <select id="oPass"><option value="no">No</option><option value="yes">Yes</option></select>
+    </div>
+  </details>
 </section>
 
 <section class="step" aria-labelledby="s2">
@@ -177,7 +208,12 @@ td{font-family:var(--mono)}
     <label for="tCon">"Consider" uplift %<input type="number" id="tCon" min="0" step="1"></label>
     <label for="tStr">"Strong yes" uplift %<input type="number" id="tStr" min="0" step="1"></label>
     <label for="tReg">Where you pay income tax<select id="tReg"><option value="ruk">England, Wales or NI</option><option value="sco">Scotland</option></select></label>
+    <label for="tLoan">Student loan<select id="tLoan"><option value="none">None</option><option value="p1">Plan 1</option><option value="p2">Plan 2</option><option value="p4">Plan 4 (Scotland)</option><option value="p5">Plan 5</option></select></label>
+    <label for="tPg">Postgraduate loan<select id="tPg"><option value="no">No</option><option value="yes">Yes</option></select></label>
+    <label for="tKids" id="kidsWrap" hidden>Children you get Child Benefit for<select id="tKids"><option value="0">None</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></label>
+    <label for="tCare" id="careWrap" hidden>Use Tax-Free Childcare or funded hours?<select id="tCare"><option value="no">No</option><option value="yes">Yes</option></select></label>
   </div>
+  <p class="note" id="circNote" hidden>Asked because your pay crosses £60,000 or £100,000, where Child Benefit and childcare support start to fall away.</p>
 </section>
 </main>
 
@@ -185,9 +221,13 @@ td{font-family:var(--mono)}
   <div class="panel">
     <div class="seg" role="group" aria-label="Compare values"><button type="button" id="vNet" aria-pressed="true">After tax</button><button type="button" id="vGross" aria-pressed="false">Before tax</button></div>
     <div class="verdict" id="verdict"></div>
+    <p class="monthly" id="monthly"></p>
     <div class="scale" id="scale" aria-hidden="true"></div>
     <div class="kv" id="totals"></div>
     <p class="alert" id="taperNote" hidden></p>
+    <p class="alert" id="careNote" hidden></p>
+    <p class="info" id="cbNote" hidden></p>
+    <p class="info" id="sacNote" hidden></p>
     <p class="basis" id="basis"></p>
   </div>
   <div class="panel">
@@ -197,9 +237,10 @@ td{font-family:var(--mono)}
   </div>
   <div class="panel">
     <strong>How this is worked out</strong>
-    <p class="note"><b>Total value</b> = base + employer pension + the part of the bonus you can count on + allowances + medical. The offer also gains or loses the value of any holiday difference (a day's pay per day) and any change in commute cost. Commute time is shown but not given a cash value.</p>
-    <p class="note"><b>After tax</b> takes off 2026/27 income tax and employee National Insurance from salary, bonus, allowances and holiday value, and income tax from medical cover (a taxable benefit). Employer pension is counted in full because it's paid in before tax, though you'll pay some tax when you draw it. Commute costs come from taxed pay, so they count in full.</p>
-    <p class="note">Not included: student loan repayments, your own pension contributions or salary sacrifice, other income, and non-standard tax codes. Figures are illustrative estimates, not financial or tax advice.</p>
+    <p class="note"><b>Total value</b> = base + employer pension (core plus any match) + the part of the bonus you can count on + allowances + medical. The offer also gains or loses the value of any holiday difference (a day's pay per day) and any change in commute cost. Commute time is shown but not given a cash value.</p>
+    <p class="note"><b>After tax</b> takes off 2026/27 income tax, employee National Insurance and any student loan from salary, bonus, allowances and holiday value, and income tax from medical cover (a taxable benefit). Your own pension contribution gets income tax relief, and also saves National Insurance if it's by salary sacrifice; it counts in full as value because it's still your money. Employer pension is counted in full because it's paid in before tax, though you'll pay some tax when you draw it. Commute costs come from taxed pay, so they count in full.</p>
+    <p class="note"><b>Monthly take-home</b> is regular pay (salary and allowances) after tax, National Insurance, student loan and your pension, before any bonus.</p>
+    <p class="note">Not included: other income, non-standard tax codes, bonus sacrifice, and tax you'll pay when you draw your pension. Figures are illustrative estimates, not financial or tax advice.</p>
   </div>
 </aside>
 </div>
@@ -212,6 +253,7 @@ td{font-family:var(--mono)}
 </footer>
 </div>
 
+<script src="/assets/calc.js?v=1"></script>
 <script>
 const QUESTIONS=[
  ["The role",[
@@ -223,19 +265,25 @@ const QUESTIONS=[
   ["What is the progression path from this role?","Tells you whether this moves you toward where you want to be."]]],
  ["The money",[
   ["What is the salary band for the role?","Get their band before naming your number."],
-  ["What is the employer pension contribution? Matched or non-contributory? Salary sacrifice?","A 10% vs 3% pension is a 7% swing in real pay."],
+  ["What is the employer pension: the core %, and how much more do they match if I pay in more? Is it on full salary or qualifying earnings, and is it salary sacrifice?","A 10% vs 3% pension is a 7% swing in real pay. Put the answers in 'Your pension, matching and salary sacrifice' in step 1, and ask whether they pass on their National Insurance saving."],
   ["What is the bonus target, and what did it actually pay out in recent years?","Count only what is proven. Use 'Bonus you can count on' in step 1."],
   ["Is the band fixed, or is there room for specialist experience?","Shows whether your strongest skills are being priced in."]]],
  ["The safety net",[
   ["What are holiday, sick pay and private medical terms?","These rarely come up unless you ask, and are often weaker outside large banks and corporates."],
   ["What is the notice period, and are there redundancy or redeployment terms?","Matters most for client-placed or contract-dependent roles."]]]
 ];
-const SAMPLE={cBase:70000,oBase:82000,cPen:10,oPen:5,cBon:10,oBon:8,cRel:"1",oRel:"0.5",cAllow:0,oAllow:0,cMed:0,oMed:600,cHol:25,oHol:25,cCom:2400,oCom:1500,cHrs:7.5,oHrs:5,tCon:10,tStr:20,tReg:"ruk",view:"net",qa:{},qn:{}};
-const ids=["cBase","oBase","cPen","oPen","cBon","oBon","cRel","oRel","cAllow","oAllow","cMed","oMed","cHol","oHol","cCom","oCom","cHrs","oHrs","tCon","tStr","tReg"];
+/* Defaults for fields added after launch, so saved figures from earlier visits keep giving the same result. */
+const DEF={cEe:"",oEe:"",cMatch:"",oMatch:"",cBasis:"full",oBasis:"full",cSac:"no",oSac:"no",cPass:"no",oPass:"no",tLoan:"none",tPg:"no",tKids:"0",tCare:"no"};
+const SAMPLE={cBase:70000,oBase:82000,cPen:10,oPen:3,cBon:10,oBon:8,cRel:"1",oRel:"0.5",cAllow:0,oAllow:0,cMed:0,oMed:600,cHol:25,oHol:25,cCom:2400,oCom:1500,cHrs:7.5,oHrs:5,
+  cEe:5,oEe:5,cMatch:0,oMatch:3,cBasis:"full",oBasis:"full",cSac:"yes",oSac:"no",cPass:"no",oPass:"no",
+  tCon:10,tStr:20,tReg:"ruk",tLoan:"none",tPg:"no",tKids:"0",tCare:"no",view:"net",qa:{},qn:{}};
+const ids=["cBase","oBase","cPen","oPen","cBon","oBon","cRel","oRel","cAllow","oAllow","cMed","oMed","cHol","oHol","cCom","oCom","cHrs","oHrs",
+  "cEe","oEe","cMatch","oMatch","cBasis","oBasis","cSac","oSac","cPass","oPass","tCon","tStr","tReg","tLoan","tPg","tKids","tCare"];
 const KEY="offer-check-v1";
 let st;
 try{st=JSON.parse(localStorage.getItem(KEY))}catch(e){}
 if(!st)st=structuredClone(SAMPLE);
+for(const k in DEF)if(st[k]==null)st[k]=DEF[k];
 st.qa=st.qa||{};st.qn=st.qn||{};st.tReg=st.tReg||"ruk";st.view=st.view||"net";
 
 const qs=document.getElementById("qs");
@@ -257,45 +305,27 @@ QUESTIONS.forEach(([g,list])=>{
 
 ids.forEach(i=>{const el=document.getElementById(i);el.value=st[i]??"";el.addEventListener("input",()=>{st[i]=el.value;save();calc()})});
 
+/* Open the pension panel when it holds the user's own answers (not the sample's). */
+const isSample=()=>JSON.stringify(ids.map(i=>String(st[i])))===JSON.stringify(ids.map(i=>String(SAMPLE[i])));
+document.getElementById("morePen").open=!isSample()&&["cEe","oEe","cMatch","oMatch","cBasis","oBasis","cSac","oSac","cPass","oPass"].some(i=>String(st[i])!==String(DEF[i])&&st[i]!==0&&st[i]!=="0");
 function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}markSample()}
-function markSample(){document.getElementById("sampleTag").hidden=JSON.stringify(ids.map(i=>String(st[i])))!==JSON.stringify(ids.map(i=>String(SAMPLE[i])))}
+function markSample(){document.getElementById("sampleTag").hidden=!isSample()}
 const n=i=>parseFloat(st[i])||0;
 const gbp=v=>"£"+Math.round(v).toLocaleString("en-GB");
 
-/* UK tax, 2026/27. Bands are on taxable income (after the personal allowance). */
-const TAX={
-  ruk:{label:"England, Wales and NI",bands:[[37700,.20],[125140,.40],[Infinity,.45]]},
-  sco:{label:"Scotland",bands:[[3967,.19],[16956,.20],[31092,.21],[62430,.42],[125140,.45],[Infinity,.48]]}
-};
-const PA=12570, NI_PT=12570, NI_UEL=50270;
-function incomeTax(income,reg){
-  const pa=Math.max(0,PA-Math.max(0,(income-100000)/2));
-  let left=Math.max(0,income-pa),t=0,prev=0;
-  for(const [top,r] of TAX[reg].bands){const slice=Math.min(left,top-prev);if(slice<=0)break;t+=slice*r;left-=slice;prev=top}
-  return t;
+/* The maths lives in /assets/calc.js (window.OC), with all 2026/27 rates in one place. */
+const R=OC.RATES;
+const reg=()=>st.tReg in R.TAX?st.tReg:"ruk";
+function opts(net){return {net,reg:reg(),loan:st.tLoan,pg:st.tPg==="yes",kids:n("tKids")}}
+function params(p,base){
+  return {base,empPct:n(p+"Pen"),matchCap:n(p+"Match"),eePct:n(p+"Ee"),basis:st[p+"Basis"],sac:st[p+"Sac"]==="yes",passNI:st[p+"Pass"]==="yes",
+    bonPct:n(p+"Bon"),rel:parseFloat(st[p+"Rel"]),allow:n(p+"Allow"),med:n(p+"Med"),
+    extraCash:p==="o"?(n("oHol")-n("cHol"))/260*base:0,commute:p==="o"?n("cCom")-n("oCom"):0};
 }
-const empNI=cash=>Math.max(0,Math.min(cash,NI_UEL)-NI_PT)*.08+Math.max(0,cash-NI_UEL)*.02;
-
-/* One side's value. cash = salary + bonus counted + allowances (+ holiday value for the offer). */
-function value(side,base,net){
-  const p=side==="c"?"c":"o";
-  const rel=parseFloat(st[p+"Rel"]);
-  const hol=side==="o"?(n("oHol")-n("cHol"))/260*base:0;
-  const cash=base*(1+n(p+"Bon")/100*rel)+n(p+"Allow")+hol;
-  const med=n(p+"Med"), pen=base*n(p+"Pen")/100;
-  const com=side==="o"?n("cCom")-n("oCom"):0;
-  if(!net)return {v:cash+med+pen+com,cash};
-  const reg=st.tReg in TAX?st.tReg:"ruk";
-  const taxCash=incomeTax(cash,reg), taxAll=incomeTax(cash+med,reg);
-  return {v:cash-taxCash-empNI(cash)+(med-(taxAll-taxCash))+pen+com,cash:cash+med};
-}
-/* Offer base that reaches a target value (value rises with base, so bisect). */
-function baseFor(target,net){
-  let lo=0,hi=Math.max(1e6,target*4);
-  if(value("o",hi,net).v<target)return NaN;
-  for(let k=0;k<60;k++){const m=(lo+hi)/2;if(value("o",m,net).v<target)lo=m;else hi=m}
-  return hi;
-}
+/* One side's value. p = "c" (current) or "o" (offer). */
+const value=(p,base,net)=>OC.side(params(p,base),opts(net));
+const monthly=(p,base)=>OC.monthly(params(p,base),opts(true));
+const setNote=(id,text)=>{const el=document.getElementById(id);el.hidden=!text;el.textContent=text||""};
 
 let last={};
 let sentCompare=false;
@@ -318,19 +348,52 @@ function calc(){
   const ve=document.getElementById("verdict");ve.className="verdict "+cls;
   ve.innerHTML=`<span class="big"></span><span></span>`;ve.children[0].textContent=v[0];ve.children[1].textContent=v[1];
 
+  /* Monthly take-home: the number people feel. */
+  const mC=monthly("c",cb),mO=monthly("o",ob),mD=mO-mC;
+  const mEl=document.getElementById("monthly");
+  mEl.hidden=!cb;
+  if(cb&&ob){mEl.innerHTML=`<b></b><span></span>`;
+    mEl.children[0].textContent=`Take-home ${mD>=0?"up":"down"} ${gbp(Math.abs(mD))} a month`;
+    mEl.children[1].textContent=`${gbp(mC)} today, ${gbp(mO)} with the offer. Regular pay after tax, NI${st.tLoan!=="none"||st.tPg==="yes"?", student loan":""} and your pension; before any bonus.`}
+  else if(cb){mEl.innerHTML=`<b></b>`;mEl.children[0].textContent=`Take-home today: ${gbp(mC)} a month`}
+
   const lab=net?"value after tax":"total value";
   const hrsSaved=(n("cHrs")-n("oHrs"))*46;
   document.getElementById("totals").innerHTML=
    `<span>Today's ${lab}</span><b>${gbp(cur)}</b><span>Offer ${lab}</span><b>${ob?gbp(off):"—"}</b><span>Difference</span><b>${ob?(diff>=0?"+":"−")+gbp(Math.abs(diff)):"—"}</b><span>Commute time saved</span><b>${hrsSaved>=0?"":"−"}${Math.abs(Math.round(hrsSaved))} hrs/yr</b>`;
 
-  const reg=st.tReg in TAX?st.tReg:"ruk";
+  const loanTxt=st.tLoan!=="none"||st.tPg==="yes"?", student loan":"";
   document.getElementById("basis").textContent=net
-    ?`After 2026/27 income tax (${TAX[reg].label}) and National Insurance. Employer pension counted in full. Illustrative estimate, not financial advice.`
+    ?`After ${R.year} income tax (${R.TAX[reg()].label}), National Insurance${loanTxt}. Employer pension counted in full. Illustrative estimate, not financial advice.`
     :`Before tax: salary, bonus and pension added at face value. Switch to "After tax" to see what you'd actually keep. Illustrative, not financial advice.`;
-  const tn=document.getElementById("taperNote");
-  const inTaper=[C.cash,ob?O.cash:0].some(x=>x>100000&&x<125140);
-  tn.hidden=!inTaper;
-  if(inTaper)tn.textContent="Pay between £100,000 and £125,140 loses the tax-free personal allowance, so tax on that slice is effectively 60% or more. Salary sacrifice into a pension can help; check with an adviser.";
+
+  /* Threshold traps, worked out on adjusted net income (after pension contributions). */
+  const tC=OC.traps(cb?C.ani:0),tO=OC.traps(ob?O.ani:0);
+  let taper="";
+  if(ob&&tO.taperSlice>tC.taperSlice)
+    taper=`${gbp(tO.taperSlice-tC.taperSlice)} of the offer's extra income is taxed at about 60% (62% with NI), because pay between £100,000 and £125,140 loses the personal allowance. Ask whether part of the rise can be paid as employer pension, or raise your own pension % in step 1.`;
+  else if(tC.taperSlice>0||tO.taperSlice>0)
+    taper="Pay between £100,000 and £125,140 is taxed at about 60%, because it loses the personal allowance. Pension contributions lower the income this is worked out on.";
+  setNote("taperNote",taper);
+
+  const over60=tC.inCbZone||tO.inCbZone, over100=tC.over100k||tO.over100k;
+  document.getElementById("kidsWrap").hidden=!over60;
+  document.getElementById("careWrap").hidden=!over100;
+  document.getElementById("circNote").hidden=!(over60||over100);
+
+  let care="";
+  if(st.tCare==="yes"&&cb&&ob&&tC.over100k!==tO.over100k)
+    care=tO.over100k
+      ?`The offer takes you over £100,000, so you'd lose Tax-Free Childcare (up to ${gbp(R.TFC_PER_CHILD)} a child a year) and funded childcare hours. That isn't in the figures above.`
+      :`The offer takes you under £100,000, so you'd regain Tax-Free Childcare (up to ${gbp(R.TFC_PER_CHILD)} a child a year) and funded childcare hours. That isn't in the figures above.`;
+  setNote("careNote",care);
+
+  setNote("cbNote",net&&n("tKids")&&(C.cbCharge||O.cbCharge)
+    ?`Includes the High Income Child Benefit Charge: ${gbp(C.cbCharge)} a year today${ob?`, ${gbp(O.cbCharge)} with the offer`:""}. It applies if you're the higher earner at home.`:"");
+
+  const sacSide=ob&&O.sacAmt>R.SAC_NI_CAP_2029?["offer's",O,st.oPass]:C.sacAmt>R.SAC_NI_CAP_2029?["current",C,st.cPass]:null;
+  setNote("sacNote",sacSide
+    ?`From April 2029, only the first ${gbp(R.SAC_NI_CAP_2029)} a year of salary-sacrificed pension avoids National Insurance. On the ${sacSide[0]} ${gbp(sacSide[1].sacAmt)}, you'd pay about ${gbp(OC.sacCapCost(sacSide[1]))} more NI a year from then${sacSide[2]==="yes"?", and the employer's NI saving it passes on would shrink":""}.`:"");
 
   const sc=document.getElementById("scale");
   const lo=cur*0.85, hi=Math.max(str*1.08, off*1.03, cur*1.3);
@@ -340,18 +403,21 @@ function calc(){
    (ob?`<div class="you" style="left:${pos(off)}%"><span>Offer</span></div>`:"");
 
   document.getElementById("needCol").textContent=net?"Value after tax":"Total value";
-  const need=[["Break-even",cur],["Consider",con],["Strong yes",str]].map(([l,t])=>[l,t,cb?baseFor(t,net):NaN]);
+  const need=[["Break-even",cur],["Consider",con],["Strong yes",str]].map(([l,t])=>[l,t,cb?OC.baseFor(t,b=>value("o",b,net).v):NaN]);
   const tb=document.querySelector("#need tbody");
   tb.innerHTML=need.map(([l,t,b])=>`<tr><td>${l}</td><td>${gbp(t)}</td><td>${isFinite(b)?gbp(b):"—"}</td></tr>`).join("");
-  document.getElementById("needNote").textContent=`At the offer's ${n("oPen")}% pension and ${n("oBon")}% bonus (counting ${st.oRel==="1"?"all":st.oRel==="0.5"?"half":"none"} of it)${net?", after tax":""}. Change those in step 1 to test other answers.`;
-  last={cur,off,con,str,diff,pct,verdict:v[0],ob,hrsSaved,need,net,reg};
+  const erTxt=+O.erPct.toFixed(2);
+  document.getElementById("needNote").textContent=`At the offer's ${erTxt}% employer pension and ${n("oBon")}% bonus (counting ${st.oRel==="1"?"all":st.oRel==="0.5"?"half":"none"} of it)${net?", after tax":""}. Change those in step 1 to test other answers.`;
+  last={cur,off,con,str,diff,pct,verdict:v[0],ob,cb,hrsSaved,need,net,reg:reg(),mC,mO,mD};
   if(!sentCompare&&cb&&ob&&document.getElementById("sampleTag").hidden){sentCompare=true;window.ocTrack&&ocTrack("compare")}
 }
 document.getElementById("vNet").addEventListener("click",()=>{st.view="net";save();calc()});
 document.getElementById("vGross").addEventListener("click",()=>{st.view="gross";save();calc()});
 
 document.getElementById("clearBtn").addEventListener("click",()=>{
-  ids.forEach(i=>st[i]=(i==="cRel"||i==="oRel")?"1":(i==="tCon"?10:i==="tStr"?20:i==="tReg"?st.tReg:""));
+  /* Keep personal circumstances (tax region, loans, children); reset everything about the two packages. */
+  const keep=["tReg","tLoan","tPg","tKids","tCare"];
+  ids.forEach(i=>{if(keep.includes(i))return;st[i]=(i==="cRel"||i==="oRel")?"1":i==="tCon"?10:i==="tStr"?20:i in DEF?DEF[i]:""});
   st.qa={};st.qn={};
   ids.forEach(i=>document.getElementById(i).value=st[i]);
   document.querySelectorAll(".q input").forEach(c=>c.checked=false);
@@ -362,8 +428,11 @@ document.getElementById("clearBtn").addEventListener("click",()=>{
 document.getElementById("copyBtn").addEventListener("click",()=>{
   window.ocTrack&&ocTrack("copy");
   const L=last,lab=L.net?"value after tax":"total value (before tax)";
-  let t=`Offer check\nBasis: ${L.net?"after 2026/27 income tax ("+TAX[L.reg].label+") and NI":"before tax"}. Illustrative estimate, not financial advice.\nVerdict: ${L.verdict}\nToday's ${lab}: ${gbp(L.cur)}\nOffer ${lab}: ${L.ob?gbp(L.off):"not yet known"}\n`;
+  const loan=st.tLoan!=="none"||st.tPg==="yes"?", NI and student loan":" and NI";
+  let t=`Offer check\nBasis: ${L.net?"after "+R.year+" income tax ("+R.TAX[L.reg].label+")"+loan:"before tax"}. Illustrative estimate, not financial advice.\nVerdict: ${L.verdict}\nToday's ${lab}: ${gbp(L.cur)}\nOffer ${lab}: ${L.ob?gbp(L.off):"not yet known"}\n`;
   if(L.ob)t+=`Difference: ${L.diff>=0?"+":"-"}${gbp(Math.abs(L.diff))} (${L.pct.toFixed(1)}%)\n`;
+  if(L.cb)t+=`Monthly take-home (regular pay, before bonus): ${gbp(L.mC)} today${L.ob?`, ${gbp(L.mO)} with the offer (${L.mD>=0?"+":"-"}${gbp(Math.abs(L.mD))})`:""}\n`;
+  ["taperNote","careNote","cbNote","sacNote"].forEach(id=>{const el=document.getElementById(id);if(!el.hidden)t+=`Note: ${el.textContent}\n`});
   t+=`Base needed: ${L.need.map(([l,,b])=>l.toLowerCase()+" "+(isFinite(b)?gbp(b):"n/a")).join(", ")}\n\nRecruiter answers:\n`;
   let i=0;QUESTIONS.forEach(([g,list])=>list.forEach(([q])=>{const id="q"+(i++);t+=`${st.qa[id]?"[x]":"[ ]"} ${q}${st.qn[id]?"\n    "+st.qn[id]:""}\n`}));
   const toast=document.getElementById("toast");

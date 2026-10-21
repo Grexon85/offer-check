@@ -12,6 +12,11 @@
   ! Cache-Control
   Cache-Control: public, max-age=86400
 
+# The calculation engine is versioned with ?v= in the page, like site.css.
+/assets/calc.js
+  ! Cache-Control
+  Cache-Control: public, max-age=86400
+
 /assets/icon.svg
   ! Cache-Control
   Cache-Control: public, max-age=604800
