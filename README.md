@@ -22,7 +22,10 @@ To host it, any static host works: GitHub Pages, Cloudflare Pages, Netlify or Ve
 
 - **Total value** = base + employer pension (core + match) + bonus × reliability + allowances + private medical. Your own pension contribution is part of base, so it isn't added twice.
 - **Bonus reliability** lets users discount a target bonus they can't count on (all, half or none).
-- The **offer** also gains or loses the value of any holiday difference (a day's pay per day, using 260 working days) and any change in commute cost.
+- The **offer** also gains or loses the value of any holiday difference and any change in commute cost. Holiday is compared in weeks off (days ÷ working days a week) at the offer's weekly pay, so 20 days on a four-day week equals 25 on five.
+- **Commute time** gets a cash value only if the user sets what an hour is worth (hours saved × 46 weeks × £/hr).
+- **Hourly rate, all in** = each side's own package after tax, less its commute cost, ÷ (contracted + commute hours) × weeks worked (52 less holiday and 8 bank holidays, in weeks of that side's pattern).
+- **Full-time equivalent** salary shows when either side isn't a five-day week. The verdict still compares actual pay; the hourly rate shows what the time is worth.
 - **Decision lines:** break-even = today's total; consider and strong yes = today's total plus a user-set uplift (default 10% and 20%).
 - **Base needed** solves for the offer base that hits each line, given the offer's pension, bonus and other terms.
 
@@ -37,7 +40,6 @@ To host it, any static host works: GitHub Pages, Cloudflare Pages, Netlify or Ve
 
 `node --test` runs `test/calc.test.js` (Node 18+, no install needed). It checks each acceptance criterion in the P0 spec and that figures saved before the pension and student loan fields existed still give the same answers.
 
-Commute time is shown in hours per year but isn't given a cash value.
 
 ## Project structure
 
