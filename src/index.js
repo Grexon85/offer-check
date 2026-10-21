@@ -2,13 +2,15 @@
 // Counts only event names per day. No cookies, no IDs, no IP addresses, no figures.
 import { DurableObject } from "cloudflare:workers";
 
-const EVENTS = new Set(["compare", "copy", "installed", "app_launch", "video_play"]);
+const EVENTS = new Set(["compare", "copy", "installed", "app_launch", "video_play", "link_copy", "link_open"]);
 const LABELS = {
   compare: "Comparisons started",
   copy: "Summaries copied",
   installed: "App installs (Android / desktop)",
   app_launch: "Opened as an app",
   video_play: "Walkthrough plays",
+  link_copy: "Share links copied",
+  link_open: "Share links opened",
 };
 
 export class Counter extends DurableObject {

@@ -101,6 +101,7 @@ td{font-family:var(--mono)}
 .info{font-size:13px;background:var(--accent-soft);color:var(--accent-strong);border-radius:6px;padding:8px 10px;margin:0}
 .monthly{margin:0;font-size:13px;color:var(--muted)}
 .monthly b{display:block;font-family:var(--display);font-size:17px;color:var(--ink);font-weight:700}
+#linkBanner{margin-top:12px}
 details.more{border-top:1px solid var(--line);padding-top:12px}
 details.more summary{cursor:pointer;font-weight:600;color:var(--accent);list-style-position:inside}
 details.more summary small{display:block;font-weight:400;color:var(--muted);font-size:13px;margin-left:1.2em}
@@ -123,9 +124,11 @@ details.more .cols{margin-top:12px}
     <span class="tag" id="sampleTag">Sample figures — replace with yours</span>
     <button id="clearBtn">Clear all</button>
     <button id="copyBtn" class="primary">Copy summary</button>
+    <button id="linkBtn">Copy link</button>
     <button id="installBtn" hidden>Install app</button>
     <span class="toast" id="toast" role="status"></span>
   </div>
+  <p class="info" id="linkBanner" hidden><span id="linkBannerText"></span> <button type="button" id="restoreBtn" hidden>Restore my figures</button></p>
 </header>
 
 <div class="grid">
@@ -174,6 +177,14 @@ details.more .cols{margin-top:12px}
 
     <label for="cHrs">Commute hours per week<small>Round trip, all office days</small></label>
     <input type="number" id="cHrs" min="0" step="0.5"><input type="number" id="oHrs" min="0" step="0.5">
+
+    <label for="cForfeit">One-off payments<small>Current: bonus or shares you'd give up by leaving now. Offer: sign-on or buy-out bonus.</small></label>
+    <div class="money"><span>£</span><input type="number" id="cForfeit" min="0" step="500"></div>
+    <div class="money"><span>£</span><input type="number" id="oSign" min="0" step="500"></div>
+
+    <label for="oClaw">Sign-on repayable if you leave within<small>Months; 0 if not repayable</small></label>
+    <span aria-hidden="true"></span>
+    <input type="number" id="oClaw" min="0" step="1">
   </div>
   <details class="more" id="morePen">
     <summary>Your pension, matching and salary sacrifice<small>Optional. Makes take-home and pension value exact when an employer matches what you pay in.</small></summary>
@@ -236,6 +247,7 @@ details.more .cols{margin-top:12px}
     <p class="alert" id="careNote" hidden></p>
     <p class="info" id="cbNote" hidden></p>
     <p class="info" id="sacNote" hidden></p>
+    <p class="info" id="oneNote" hidden></p>
     <p class="basis" id="basis"></p>
   </div>
   <div class="panel">
@@ -262,7 +274,7 @@ details.more .cols{margin-top:12px}
 </footer>
 </div>
 
-<script src="/assets/calc.js?v=2"></script>
+<script src="/assets/calc.js?v=3"></script>
 <script>
 const QUESTIONS=[
  ["The role",[
@@ -279,15 +291,22 @@ const QUESTIONS=[
   ["Is the band fixed, or is there room for specialist experience?","Shows whether your strongest skills are being priced in."]]],
  ["The safety net",[
   ["What are holiday, sick pay and private medical terms?","These rarely come up unless you ask, and are often weaker outside large banks and corporates."],
-  ["What is the notice period, and are there redundancy or redeployment terms?","Matters most for client-placed or contract-dependent roles."]]]
+  ["What is the notice period, and are there redundancy or redeployment terms?","Matters most for client-placed or contract-dependent roles."]]],
+ ["Terms and risk",[
+  ["How long is probation, and what is the notice period during it?","Short probation notice means less security in your first months."],
+  ["What enhanced parental leave and pay is offered?","Can be worth thousands if you plan a family; statutory pay is much lower."],
+  ["When is the next pay review, and what were the last two rises?","A role where pay stands still loses value every year."],
+  ["Is the role permanent, fixed-term, or tied to funding or a client contract?","Fixed-term and contract-dependent roles carry more risk; raise your decision lines."],
+  ["Are there restrictive covenants, such as a non-compete or non-solicit?","They can limit your next move. Ask to see the clause before signing."],
+  ["Is there a sign-on or buy-out bonus for anything I'd give up, and is it repayable if I leave early?","Enter it under 'One-off payments' in step 1. It counts in year one only, not the verdict."]]]
 ];
 /* Defaults for fields added after launch, so saved figures from earlier visits keep giving the same result. */
 const DEF={cEe:"",oEe:"",cMatch:"",oMatch:"",cBasis:"full",oBasis:"full",cSac:"no",oSac:"no",cPass:"no",oPass:"no",tLoan:"none",tPg:"no",tKids:"0",tCare:"no",
-  cDays:5,oDays:5,cCHrs:37.5,oCHrs:37.5,tTime:""};
+  cDays:5,oDays:5,cCHrs:37.5,oCHrs:37.5,tTime:"",cForfeit:"",oSign:"",oClaw:""};
 const SAMPLE={cBase:70000,oBase:82000,cPen:10,oPen:3,cBon:10,oBon:8,cRel:"1",oRel:"0.5",cAllow:0,oAllow:0,cMed:0,oMed:600,cHol:25,oHol:25,cCom:2400,oCom:1500,cHrs:7.5,oHrs:5,
-  cEe:5,oEe:5,cMatch:0,oMatch:3,cBasis:"full",oBasis:"full",cSac:"yes",oSac:"no",cPass:"no",oPass:"no",cDays:5,oDays:5,cCHrs:37.5,oCHrs:37.5,
+  cEe:5,oEe:5,cMatch:0,oMatch:3,cBasis:"full",oBasis:"full",cSac:"yes",oSac:"no",cPass:"no",oPass:"no",cDays:5,oDays:5,cCHrs:37.5,oCHrs:37.5,cForfeit:"",oSign:"",oClaw:"",
   tCon:10,tStr:20,tReg:"ruk",tLoan:"none",tPg:"no",tKids:"0",tCare:"no",tTime:"",view:"net",qa:{},qn:{}};
-const ids=["cBase","oBase","cPen","oPen","cBon","oBon","cRel","oRel","cAllow","oAllow","cMed","oMed","cHol","oHol","cDays","oDays","cCHrs","oCHrs","cCom","oCom","cHrs","oHrs",
+const ids=["cBase","oBase","cPen","oPen","cBon","oBon","cRel","oRel","cAllow","oAllow","cMed","oMed","cHol","oHol","cDays","oDays","cCHrs","oCHrs","cCom","oCom","cHrs","oHrs","cForfeit","oSign","oClaw",
   "cEe","oEe","cMatch","oMatch","cBasis","oBasis","cSac","oSac","cPass","oPass","tCon","tStr","tReg","tTime","tLoan","tPg","tKids","tCare"];
 const KEY="offer-check-v1";
 let st;
@@ -295,6 +314,23 @@ try{st=JSON.parse(localStorage.getItem(KEY))}catch(e){}
 if(!st)st=structuredClone(SAMPLE);
 for(const k in DEF)if(st[k]==null)st[k]=DEF[k];
 st.qa=st.qa||{};st.qn=st.qn||{};st.tReg=st.tReg||"ruk";st.view=st.view||"net";
+
+/* Opened from a share link (#s=...): show those figures, keep the visitor's own saved figures aside to restore. */
+const BACKUP=KEY+"-before-link";
+let linkMsg="";
+{const m=location.hash.match(/^#s=(.*)$/);
+ if(m){
+  const got=OC.decodeState(m[1],ids.concat("view"));
+  history.replaceState(null,"",location.pathname+location.search);
+  if(got){
+    let had=false;try{const prev=localStorage.getItem(KEY);if(prev){localStorage.setItem(BACKUP,prev);had=true}}catch(e){}
+    const fresh={qa:{},qn:{},view:"net",cRel:"1",oRel:"1",tCon:10,tStr:20,tReg:"ruk"};
+    ids.forEach(i=>{if(!(i in fresh))fresh[i]=i in DEF?DEF[i]:""});
+    st=Object.assign(fresh,got);
+    linkMsg=had?"You opened a shared comparison. Your own figures are kept aside.":"You opened a shared comparison.";
+    addEventListener("load",()=>window.ocTrack&&ocTrack("link_open"));
+  } else linkMsg="That share link couldn't be read, so your own figures are shown.";
+ }}
 
 const qs=document.getElementById("qs");
 let qi=0;
@@ -379,11 +415,14 @@ function calc(){
   const tv=OC.timeValue(n("cHrs"),n("oHrs"),n("tTime"));
   const hC=cb?hourlyRate("c",cb):NaN,hO=ob?hourlyRate("o",ob):NaN;
   const fteRow=n("cDays")&&n("cDays")!==5||n("oDays")&&n("oDays")!==5;
+  const oneOffs=n("cForfeit")||n("oSign");
+  const yr1=oneOffs&&cb&&ob?OC.yearOne(params("c",cb),params("o",ob),n("oSign"),n("cForfeit"),opts(net)):oneOffs?NaN:null;
   const pair=(a,b,f)=>isFinite(a)?(isFinite(b)?`${f(a)} → ${f(b)}`:f(a)):"—";
   document.getElementById("totals").innerHTML=
    `<span>Today's ${lab}</span><b>${gbp(cur)}</b><span>Offer ${lab}</span><b>${ob?gbp(off):"—"}</b><span>Difference</span><b>${ob?(diff>=0?"+":"−")+gbp(Math.abs(diff)):"—"}</b>`+
    `<span>Commute time saved${n("tTime")?` (${tv>=0?"+":"−"}${gbp(Math.abs(tv))} counted)`:""}</span><b>${hrsSaved>=0?"":"−"}${Math.abs(Math.round(hrsSaved))} hrs/yr</b>`+
    `<span>Hourly rate, all in</span><b>${pair(hC,hO,gbp2)}</b>`+
+   (yr1!==null?`<span>Year one, with one-off payments</span><b>${isFinite(yr1)?(yr1>=0?"+":"−")+gbp(Math.abs(yr1)):"—"}</b>`:"")+
    (fteRow?`<span>Full-time equivalent salary</span><b>${pair(cb?OC.fte(cb,n("cDays")):NaN,ob?OC.fte(ob,n("oDays")):NaN,gbp)}</b>`:"");
   document.getElementById("tTime").placeholder=isFinite(hC)&&hC>0?`Optional, e.g. ${gbp(hC)}`:"Optional";
 
@@ -420,6 +459,9 @@ function calc(){
   setNote("sacNote",sacSide
     ?`From April 2029, only the first ${gbp(R.SAC_NI_CAP_2029)} a year of salary-sacrificed pension avoids National Insurance. On the ${sacSide[0]} ${gbp(sacSide[1].sacAmt)}, you'd pay about ${gbp(OC.sacCapCost(sacSide[1]))} more NI a year from then${sacSide[2]==="yes"?", and the employer's NI saving it passes on would shrink":""}.`:"");
 
+  setNote("oneNote",oneOffs&&ob
+    ?`One-off payments count in year one only, not in the verdict.${n("cForfeit")?` Leaving now gives up ${gbp(n("cForfeit"))} before tax.`:""}${n("oSign")&&n("oClaw")?` The ${gbp(n("oSign"))} sign-on is repayable if you leave within ${n("oClaw")} months.`:""}`:"");
+
   const sc=document.getElementById("scale");
   const lo=cur*0.85, hi=Math.max(str*1.08, off*1.03, cur*1.3);
   const pos=x=>Math.min(100,Math.max(0,(x-lo)/(hi-lo)*100));
@@ -433,7 +475,7 @@ function calc(){
   tb.innerHTML=need.map(([l,t,b])=>`<tr><td>${l}</td><td>${gbp(t)}</td><td>${isFinite(b)?gbp(b):"—"}</td></tr>`).join("");
   const erTxt=+O.erPct.toFixed(2);
   document.getElementById("needNote").textContent=`At the offer's ${erTxt}% employer pension and ${n("oBon")}% bonus (counting ${st.oRel==="1"?"all":st.oRel==="0.5"?"half":"none"} of it)${net?", after tax":""}. Change those in step 1 to test other answers.`;
-  last={cur,off,con,str,diff,pct,verdict:v[0],ob,cb,hrsSaved,need,net,reg:reg(),mC,mO,mD,hC,hO,tv};
+  last={cur,off,con,str,diff,pct,verdict:v[0],ob,cb,hrsSaved,need,net,reg:reg(),mC,mO,mD,hC,hO,tv,yr1};
   if(!sentCompare&&cb&&ob&&document.getElementById("sampleTag").hidden){sentCompare=true;window.ocTrack&&ocTrack("compare")}
 }
 document.getElementById("vNet").addEventListener("click",()=>{st.view="net";save();calc()});
@@ -459,7 +501,8 @@ document.getElementById("copyBtn").addEventListener("click",()=>{
   if(L.cb)t+=`Monthly take-home (regular pay, before bonus): ${gbp(L.mC)} today${L.ob?`, ${gbp(L.mO)} with the offer (${L.mD>=0?"+":"-"}${gbp(Math.abs(L.mD))})`:""}\n`;
   if(isFinite(L.hC))t+=`Hourly rate, all in (after tax, incl. commute time): ${gbp2(L.hC)} today${isFinite(L.hO)?`, ${gbp2(L.hO)} with the offer`:""}\n`;
   if(n("tTime"))t+=`Commute time valued at ${gbp(n("tTime"))}/hr: ${L.tv>=0?"+":"-"}${gbp(Math.abs(L.tv))} a year for the offer\n`;
-  ["taperNote","careNote","cbNote","sacNote"].forEach(id=>{const el=document.getElementById(id);if(!el.hidden)t+=`Note: ${el.textContent}\n`});
+  if(L.yr1!=null&&isFinite(L.yr1))t+=`Year one, with one-off payments: ${L.yr1>=0?"+":"-"}${gbp(Math.abs(L.yr1))}\n`;
+  ["taperNote","careNote","cbNote","sacNote","oneNote"].forEach(id=>{const el=document.getElementById(id);if(!el.hidden)t+=`Note: ${el.textContent}\n`});
   t+=`Base needed: ${L.need.map(([l,,b])=>l.toLowerCase()+" "+(isFinite(b)?gbp(b):"n/a")).join(", ")}\n\nRecruiter answers:\n`;
   let i=0;QUESTIONS.forEach(([g,list])=>list.forEach(([q])=>{const id="q"+(i++);t+=`${st.qa[id]?"[x]":"[ ]"} ${q}${st.qn[id]?"\n    "+st.qn[id]:""}\n`}));
   const toast=document.getElementById("toast");
@@ -467,6 +510,26 @@ document.getElementById("copyBtn").addEventListener("click",()=>{
   setTimeout(()=>toast.textContent="",3000);
 });
 
+/* Share link: figures and settings travel in the link after #, which is never sent to our server. Notes stay on this device. */
+const toast=msg=>{const t=document.getElementById("toast");t.textContent=msg;clearTimeout(toast.t);toast.t=setTimeout(()=>t.textContent="",4000)};
+const linkBtn=document.getElementById("linkBtn");let linkArm=false,linkTimer;
+linkBtn.addEventListener("click",()=>{
+  if(!linkArm){linkArm=true;linkBtn.textContent="Includes your salary figures. Copy?";clearTimeout(linkTimer);
+    linkTimer=setTimeout(()=>{linkArm=false;linkBtn.textContent="Copy link"},6000);return}
+  linkArm=false;clearTimeout(linkTimer);linkBtn.textContent="Copy link";
+  const url=location.origin+"/#s="+OC.encodeState(st,ids.concat("view"));
+  navigator.clipboard.writeText(url).then(()=>toast("Link copied. Your notes aren't included."),()=>toast("Copy blocked here."));
+  window.ocTrack&&ocTrack("link_copy");
+});
+/* A link pasted into a tab already on the site only changes the address, so reload to read it. */
+addEventListener("hashchange",()=>{if(location.hash.startsWith("#s="))location.reload()});
+if(linkMsg){
+  document.getElementById("linkBanner").hidden=false;document.getElementById("linkBannerText").textContent=linkMsg;
+  let backup=null;try{backup=localStorage.getItem(BACKUP)}catch(e){}
+  const rb=document.getElementById("restoreBtn");rb.hidden=!backup||linkMsg.startsWith("That");
+  rb.addEventListener("click",()=>{try{localStorage.setItem(KEY,backup);localStorage.removeItem(BACKUP)}catch(e){}location.reload()});
+  if(!linkMsg.startsWith("That"))save();
+}
 markSample();calc();
 /* Install button: shown only where the browser supports installing (Chrome, Edge, Android). */
 let installEvt=null;const ib=document.getElementById("installBtn");
