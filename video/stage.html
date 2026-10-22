@@ -1,0 +1,408 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Offer Check walkthrough stage</title>
+<!-- 1920×1080 animation for the walkthrough video. Deterministic: render(t) draws the frame at t seconds.
+     Timings come from window.TIMINGS (made by voice.py from cues.json, or from a real recording). -->
+<style>
+@font-face{font-family:"PJS";src:url(../public/assets/fonts/plus-jakarta-sans-latin-400-normal.woff2) format("woff2");font-weight:400}
+@font-face{font-family:"PJS";src:url(../public/assets/fonts/plus-jakarta-sans-latin-600-normal.woff2) format("woff2");font-weight:600}
+@font-face{font-family:"PJS";src:url(../public/assets/fonts/plus-jakarta-sans-latin-700-normal.woff2) format("woff2");font-weight:700}
+@font-face{font-family:"PJS";src:url(../public/assets/fonts/plus-jakarta-sans-latin-800-normal.woff2) format("woff2");font-weight:800}
+@font-face{font-family:"JBM";src:url(../public/assets/fonts/jetbrains-mono-latin-400-normal.woff2) format("woff2");font-weight:400}
+:root{--bg:#f5f4f0;--surface:#fff;--ink:#141c1a;--muted:#55635e;--line:#e4e8e5;--accent:#0d5c52;--accent-soft:#e3efeb;
+  --good:#1d7a3e;--good-bg:#e3f2e7;--warn:#a9620c;--warn-bg:#fcf1df;--bad-bg:#fbe5e1}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1920px;height:1080px;overflow:hidden;background:var(--bg);color:var(--ink);font-family:"PJS",sans-serif;font-variant-numeric:tabular-nums}
+.scene{position:absolute;inset:0;opacity:0}
+.left{position:absolute;left:110px;top:0;width:560px;height:1080px;display:flex;flex-direction:column;justify-content:center;gap:0;padding-bottom:60px}
+.eyebrow{font-weight:700;font-size:24px;letter-spacing:.12em;color:var(--accent)}
+.left h2{font-weight:800;font-size:68px;line-height:1.04;letter-spacing:-.02em;margin-top:14px}
+.left p{font-size:27px;color:var(--muted);line-height:1.4;margin-top:18px;max-width:520px}
+.steps{list-style:none;margin-top:56px;display:grid;gap:14px}
+.steps li{display:flex;align-items:center;gap:14px;font-size:23px;color:var(--muted)}
+.steps i{font-style:normal;width:32px;height:32px;border-radius:50%;border:2px solid #b9c4bf;display:grid;place-items:center;font-size:16px;font-weight:700;color:var(--muted)}
+.steps li.done i{border-color:var(--accent);color:var(--accent)}
+.steps li.on{color:var(--ink);font-weight:700}
+.steps li.on i{background:var(--accent);border-color:var(--accent);color:#fff}
+.cw{position:absolute;left:730px;top:0;width:1080px;height:940px;display:flex;align-items:center}
+.card{position:relative;width:100%;background:var(--surface);border-radius:30px;box-shadow:0 2px 4px rgba(20,40,35,.05),0 18px 50px rgba(20,40,35,.08);padding:36px 44px}
+.card h3{font-weight:800;font-size:30px;display:flex;justify-content:space-between;align-items:baseline}
+.card h3 small{font-weight:400;font-size:19px;color:var(--muted)}
+/* pay table */
+.pt{margin-top:10px}
+.pt .hd,.pt .r{display:grid;grid-template-columns:1fr 250px 250px;align-items:center}
+.pt .hd span{font-size:16px;font-weight:700;letter-spacing:.1em;color:var(--muted);text-align:right;padding-right:16px}
+.pt .r{height:40px;border-bottom:1px solid var(--line);font-size:21px;overflow:hidden}
+.pt .r b{font-weight:400}
+.pt .v{position:relative;text-align:right;padding-right:16px;font-weight:600;height:100%;display:flex;align-items:center;justify-content:flex-end}
+.pt .v.o{color:var(--accent)}
+.pt .v.empty{color:#b5bfbb;font-weight:400}
+.hl{position:absolute;inset:5px 2px;border:2px solid var(--accent);background:var(--accent-soft);border-radius:9px;z-index:0;opacity:0}
+.pt .v span{position:relative;z-index:1}
+.pt .sum{color:var(--accent);font-weight:700;display:flex;gap:10px;align-items:center}
+.pt .sum .tri{display:inline-block;width:0;height:0;border-left:10px solid var(--accent);border-top:7px solid transparent;border-bottom:7px solid transparent;transform-origin:3px 50%}
+.pt .sub b{padding-left:28px;color:var(--ink)}
+.pt .ft{border-bottom:0;border-top:2px solid var(--ink);height:66px;margin-top:4px}
+.pt .ft b{font-weight:800;font-size:22px;line-height:1.1}
+.pt .ft b small{display:block;font-weight:400;font-size:15px;color:var(--muted)}
+.pt .ft .v{font-size:25px;font-weight:800}
+/* questions */
+.qcols{display:grid;grid-template-columns:1fr 1fr;gap:10px 40px;margin-top:18px}
+.qg h4{font-size:19px;font-weight:800;color:var(--accent);margin:12px 0 6px}
+.q{display:grid;grid-template-columns:24px 1fr auto;gap:10px;align-items:center;min-height:38px;font-size:18.5px;position:relative;border-radius:8px;padding:0 6px}
+.q .cb{width:22px;height:22px;border:2px solid #b9c4bf;border-radius:5px;display:grid;place-items:center}
+.q .cb.on{background:var(--accent);border-color:var(--accent)}
+.q .cb svg{width:14px;height:14px}
+.q .ans{font-size:16px;font-weight:700;color:var(--accent);white-space:nowrap}
+.q .qhl{position:absolute;inset:0;border:2px solid var(--accent);border-radius:8px;background:var(--accent-soft);opacity:0;z-index:-1}
+/* settings */
+.set{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:26px}
+.fld{border:1px solid var(--line);border-radius:14px;padding:16px 20px;position:relative;background:var(--bg)}
+.fld label{display:block;font-size:17px;color:var(--muted);font-weight:600}
+.fld .val{font-size:30px;font-weight:800;margin-top:4px;color:var(--ink)}
+.fld .val.empty{color:#b5bfbb;font-weight:400;font-size:24px}
+.fld .hl{inset:-2px;border-radius:15px;z-index:2;background:transparent;border-width:3px}
+.sech{font-size:18px;font-weight:700;letter-spacing:.1em;color:var(--muted);margin-top:30px}
+/* result */
+.seg{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);border-radius:12px;padding:4px;gap:4px;background:var(--bg);position:relative;width:420px;height:52px}
+.seg .knob{position:absolute;top:4px;bottom:4px;width:calc(50% - 6px);background:#fff;border-radius:9px;box-shadow:0 1px 3px rgba(0,0,0,.14)}
+.seg span{position:relative;display:grid;place-items:center;font-weight:700;font-size:18px;color:var(--muted)}
+.verdict{margin-top:18px;border-radius:16px;padding:18px 24px;background:var(--warn-bg);color:var(--warn);display:flex;gap:24px;align-items:baseline}
+.verdict .big{font-weight:800;font-size:40px;white-space:nowrap}
+.verdict .why{font-size:21px;font-weight:600}
+.month{margin-top:16px;position:relative;padding:8px 12px;border-radius:12px}
+.month b{font-weight:800;font-size:27px;display:block;position:relative;z-index:1}
+.month span{font-size:18px;color:var(--muted);position:relative;z-index:1}
+.scale{position:relative;height:74px;margin:8px 14px 0}
+.track{position:absolute;left:0;right:0;top:34px;height:10px;border-radius:5px;background:linear-gradient(90deg,var(--bad-bg),var(--warn-bg),var(--good-bg))}
+.mk{position:absolute;top:24px;width:3px;height:30px;background:var(--muted);margin-left:-1px}
+.mk span{position:absolute;top:34px;left:50%;transform:translateX(-50%);font-size:16px;color:var(--muted);white-space:nowrap}
+.dot{position:absolute;top:6px;width:20px;height:20px;margin-left:-10px;border-radius:50%;background:var(--accent);border:3px solid #fff;box-shadow:0 0 0 1px var(--accent)}
+.res{display:grid;grid-template-columns:1fr 1fr;gap:0 46px;margin-top:6px}
+.kv{display:flex;justify-content:space-between;align-items:center;height:40px;font-size:20px;border-bottom:1px solid var(--line);position:relative;padding:0 8px}
+.kv b{font-weight:700;position:relative;z-index:1}.kv>span{position:relative;z-index:1}
+.need{font-size:20px}
+.need .row{display:grid;grid-template-columns:1fr 1fr 1fr;height:40px;align-items:center;border-bottom:1px solid var(--line);position:relative;padding:0 8px}
+.need .row span{position:relative;z-index:1;text-align:right}.need .row span:nth-of-type(1){text-align:left}
+.need .th{font-weight:700;color:var(--muted);font-size:16px}
+.ttl{font-weight:800;font-size:21px;margin:18px 0 4px}
+/* share */
+.btns{display:flex;gap:16px;margin-top:26px;align-items:center}
+.btn{font-weight:700;font-size:22px;border:1px solid var(--line);border-radius:12px;padding:14px 22px;background:#fff;position:relative}
+.btn.pri{background:var(--accent);color:#fff;border-color:var(--accent)}
+.toast{font-size:20px;color:var(--good);font-weight:600}
+.sumbox{margin-top:22px;background:var(--bg);border:1px solid var(--line);border-radius:16px;padding:20px 24px;font-family:"JBM",monospace;font-size:18px;line-height:1.6;white-space:pre;color:#2b3633}
+.linkchip{margin-top:22px;display:flex;gap:24px;align-items:stretch}
+.lk{flex:1;border:1px solid var(--line);border-radius:16px;padding:18px 22px;background:var(--bg)}
+.lk small{display:block;font-size:16px;color:var(--muted);font-weight:600;margin-bottom:6px}
+.lk code{font-family:"JBM",monospace;font-size:18px;color:var(--accent)}
+.banner{background:var(--accent-soft);color:#09463e;border-radius:12px;padding:14px 18px;font-size:19px;font-weight:600;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.banner .btn{font-size:17px;padding:8px 14px}
+/* title + end */
+.brand{position:absolute;left:0;right:0;top:0;bottom:120px;display:flex;flex-direction:column;justify-content:center;padding-left:200px}
+.brand h1{font-weight:800;font-size:170px;letter-spacing:-.035em;line-height:1}
+.brand h1 em{font-style:normal;color:var(--accent)}
+.brand p{font-size:44px;color:var(--muted);margin-top:22px}
+.brand .url{font-size:38px;font-weight:700;color:var(--accent);margin-top:36px}
+.mark{width:120px;height:120px;margin-bottom:36px}
+/* caption + progress */
+#cap{position:absolute;left:50%;bottom:54px;transform:translateX(-50%);max-width:1240px;background:var(--accent);color:#fff;font-weight:600;font-size:31px;line-height:1.3;text-align:center;padding:14px 30px;border-radius:12px;opacity:0;width:max-content}
+#prog{position:absolute;left:0;bottom:0;height:8px;background:var(--accent)}
+</style>
+</head>
+<body>
+
+<div class="scene" id="sc-title">
+  <div class="brand">
+    <svg class="mark" viewBox="0 0 64 64"><circle cx="32" cy="32" r="32" fill="#0d5c52"/><path d="M18.5 33.5l9 9 18-19" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <h1>Offer <em>Check</em></h1>
+    <p>Is that job offer actually better than what you have now?</p>
+  </div>
+</div>
+
+<div class="scene" id="sc-s1"></div>
+<div class="scene" id="sc-s2"></div>
+<div class="scene" id="sc-s3"></div>
+<div class="scene" id="sc-s4"></div>
+<div class="scene" id="sc-s5"></div>
+<div class="scene" id="sc-s6"></div>
+
+<div class="scene" id="sc-end">
+  <div class="brand">
+    <svg class="mark" viewBox="0 0 64 64"><circle cx="32" cy="32" r="32" fill="#0d5c52"/><path d="M18.5 33.5l9 9 18-19" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <h1>Offer <em>Check</em></h1>
+    <p>Know your numbers before you say yes.</p>
+    <div class="url">offer-check.net</div>
+  </div>
+</div>
+
+<div id="cap"></div>
+<div id="prog"></div>
+
+<script>
+/* ---------- helpers ---------- */
+const $=s=>document.querySelector(s);
+const clamp=(x,a,b)=>Math.min(b,Math.max(a,x));
+const sm=x=>{x=clamp(x,0,1);return x*x*(3-2*x)};
+const fadeIn=(t,t0,d=.35)=>sm((t-t0)/d);
+const lerp=(a,b,x)=>a+(b-a)*x;
+const gbp=v=>"£"+Math.round(v).toLocaleString("en-GB");
+let T, CUES, DUR;
+const C=i=>CUES[i];
+const at=(i,f)=>C(i).start+f*(C(i).end-C(i).start);
+const sceneCues=s=>CUES.filter(c=>c.scene===s);
+let SC={};             // scene -> [start, end]
+function el(html){const d=document.createElement("div");d.innerHTML=html.trim();return d.firstChild}
+const TICK='<svg viewBox="0 0 16 16"><path d="M3 8.5l3.2 3.2L13 5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+/* highlight: visible for a moment after an event, fading out */
+const hlOp=(t,t0,hold=1.0)=>t<t0?0:t<t0+.2?sm((t-t0)/.2):t<t0+hold?1:1-sm((t-t0-hold)/.35);
+
+const STEPS=["Today's package","Recruiter questions","The offer","Decision lines","Verdict"];
+function left(eyebrow,title,sub,active){
+  return `<div class="left"><div class="eyebrow">${eyebrow}</div><h2>${title}</h2><p>${sub}</p>
+  <ul class="steps">${STEPS.map((s,i)=>`<li class="${i<active?"done":i===active?"on":""}"><i>${i+1}</i>${s}</li>`).join("")}</ul></div>`;
+}
+
+/* ---------- the pay table (used in step 1 and step 3) ---------- */
+const ROWS=[
+  ["base","Base salary","£70,000","£82,000"],
+  ["pen","Employer pension","10%","3%"],
+  ["bon","Bonus","10%","8% target"],
+  ["rel","Bonus you can count on","All of it","Half"],
+  ["allow","Allowances","£0","£0"],
+  ["med","Private medical","£0","£600"],
+  ["hol","Holiday days","25 days","25 days"],
+  ["wk","Working week","5 days · 37.5 hrs","5 days · 37.5 hrs"],
+  ["com","Commute cost / year","£2,400","£1,500"],
+  ["hrs","Commute hours / week","7.5 hrs","5 hrs"],
+  ["SUM","Your pension, matching and salary sacrifice"],
+  ["ee","Your pension","5%","5%"],
+  ["match","Employer matches you up to","—","3%"],
+  ["sac","Salary sacrifice","Yes","No"],
+  ["one","One-off payments","—","£5,000 sign-on"],
+];
+const SUBROWS=["ee","match","sac"];
+let EV={};              // "c.base" / "o.base" -> time the value appears
+let PEN_OPEN, ONE_OPEN, FOOT_C, FOOT_O;
+function payCard(){
+  return `<div class="card"><h3>Pay and benefits <small>Today vs offer</small></h3><div class="pt">
+   <div class="hd"><span></span><span>TODAY</span><span>OFFER</span></div>
+   ${ROWS.map(([k,l,c,o])=>k==="SUM"
+     ?`<div class="r" data-k="SUM"><b class="sum"><i class="tri"></i>${l}</b><span></span><span></span></div>`
+     :`<div class="r ${SUBROWS.includes(k)?"sub":""}" data-k="${k}"><b>${l}</b>
+        <div class="v" data-c="c.${k}" data-val="${c}"><i class="hl"></i><span></span></div>
+        <div class="v o" data-c="o.${k}" data-val="${o}"><i class="hl"></i><span></span></div></div>`).join("")}
+   <div class="r ft"><b>Value after tax<small>Take-home pay + pension + benefits</small></b>
+     <div class="v" data-c="FOOT_C" data-val="£59,717"><i class="hl"></i><span></span></div>
+     <div class="v o" data-c="FOOT_O" data-val="£62,809"><i class="hl"></i><span></span></div></div>
+  </div></div>`;
+}
+function renderPay(root,t){
+  root.querySelectorAll(".v").forEach(v=>{
+    const key=v.dataset.c, t0=key==="FOOT_C"?FOOT_C:key==="FOOT_O"?FOOT_O:EV[key];
+    const on=t0!=null&&t>=t0;
+    v.querySelector("span").textContent=on?v.dataset.val:"—";
+    v.classList.toggle("empty",!on);
+    v.querySelector(".hl").style.opacity=t0!=null?hlOp(t,t0):0;
+  });
+  const open=sm((t-PEN_OPEN)/.5), one=sm((t-ONE_OPEN)/.5);
+  root.querySelector('[data-k="SUM"] .tri').style.transform=`rotate(${90*open}deg)`;
+  SUBROWS.forEach(k=>{const r=root.querySelector(`[data-k="${k}"]`);r.style.height=40*open+"px";r.style.opacity=open;r.style.borderBottomWidth=open>0.02?"1px":"0"});
+  const r=root.querySelector('[data-k="one"]');r.style.height=40*one+"px";r.style.opacity=one;r.style.borderBottomWidth=one>0.02?"1px":"0";
+}
+
+/* ---------- questions ---------- */
+const QS=[
+ ["The role",[["Employer, in-house or client-placed?","In-house"],["Location and office days?","Hybrid, 2 days"],["Why is the role open?","New role"],["How many people would I manage?",""],["Success at 6 and 12 months?",""],["Progression path?",""]]],
+ ["The money",[["What is the salary band?","£78–88k"],["Pension, match, salary sacrifice?","3% + 3% match"],["Bonus target, and what it paid?","8% target"],["Room for specialist experience?",""]]],
+ ["The safety net",[["Holiday, sick pay and medical?","25 days, medical"],["Notice and redundancy terms?",""]]],
+ ["Terms and risk",[["Probation, and notice during it?","6 months"],["Enhanced parental leave?",""],["Next pay review, last two rises?",""],["Permanent, fixed-term or client-tied?","Permanent"],["Non-compete or non-solicit?",""],["Sign-on bonus, repayable?","£5,000, 12 months"]]],
+];
+let QT=[];   // tick time per question index
+function qCard(){
+  let n=0;
+  const grp=([g,list])=>`<div class="qg"><h4>${g}</h4>${list.map(([q,a])=>{const i=n++;return `<div class="q" data-i="${i}"><i class="qhl"></i><span class="cb"></span><span>${q}</span><span class="ans" data-a="${a}"></span></div>`}).join("")}</div>`;
+  // two columns, like the guide: role + safety net | money + terms
+  const parts=QS.map(grp);
+  return `<div class="card"><h3>Questions to ask the recruiter <small>Tick and note each answer</small></h3>
+    <div class="qcols"><div>${parts[0]}${parts[2]}</div><div>${parts[1]}${parts[3]}</div></div></div>`;
+}
+let BAND_HL;
+function renderQ(root,t){
+  root.querySelectorAll(".q").forEach(q=>{
+    const i=+q.dataset.i, t0=QT[i], on=t0!=null&&t>=t0;
+    const cb=q.querySelector(".cb");cb.classList.toggle("on",on);cb.innerHTML=on?TICK:"";
+    const a=q.querySelector(".ans");a.textContent=on?a.dataset.a:"";a.style.opacity=on?fadeIn(t,t0+.15,.3):0;
+    q.querySelector(".qhl").style.opacity=i===6?hlOp(t,BAND_HL,2.2):0;
+  });
+}
+
+/* ---------- decision lines + circumstances ---------- */
+let SET={};
+function setCard(){
+  const f=(k,l,v)=>`<div class="fld" data-k="${k}"><i class="hl"></i><label>${l}</label><div class="val" data-v="${v}"></div></div>`;
+  return `<div class="card"><h3>Your decision lines <small>Set these before the verdict</small></h3>
+    <div class="set">${f("con","“Consider” uplift","10%")}${f("str","“Strong yes” uplift","20%")}</div>
+    <div class="sech">YOUR CIRCUMSTANCES</div>
+    <div class="set">${f("tax","Where you pay income tax","England, Wales or NI")}${f("loan","Student loan","Plan 2")}
+      ${f("pg","Postgraduate loan","No")}${f("time","Value of an hour of your time","Optional")}</div>
+    <div class="scale" style="margin-top:40px"><div class="track"></div>
+      <div class="mk" style="left:12%"><span>Break-even</span></div><div class="mk" style="left:48%"><span>Consider</span></div><div class="mk" style="left:84%"><span>Strong yes</span></div></div>
+  </div>`;
+}
+function renderSet(root,t){
+  root.querySelectorAll(".fld").forEach(f=>{
+    const t0=SET[f.dataset.k], on=t0!=null&&t>=t0, v=f.querySelector(".val");
+    v.textContent=on?v.dataset.v:"—";v.classList.toggle("empty",!on||v.dataset.v==="Optional");
+    f.querySelector(".hl").style.opacity=t0!=null?hlOp(t,t0,1.2):0;
+  });
+  const sc=root.querySelector(".scale"), x=sm((t-SET.scale)/.5);sc.style.opacity=x;
+}
+
+/* ---------- result ---------- */
+const NET={cur:59717,off:62809,con:65689,str:71660,pct:"5.2",need:[["Break-even","£59,717","£76,755"],["Consider","£65,689","£86,884"],["Strong yes","£71,660","£97,012"]],
+  kv:[["Today's value after tax","£59,717"],["Offer value after tax","£62,809"],["Difference","+£3,092"]],yr1:"+£5,542",lab:"Value after tax"};
+const GROSS={cur:84000,off:91700,con:92400,str:100800,pct:"9.2",need:[["Break-even","£84,000","£75,000"],["Consider","£92,400","£82,636"],["Strong yes","£100,800","£90,273"]],
+  kv:[["Today's total value","£84,000"],["Offer total value","£91,700"],["Difference","+£7,700"]],yr1:"+£12,700",lab:"Total value"};
+let R={};
+function resCard(){
+  return `<div class="card"><div style="display:flex;justify-content:space-between;align-items:center"><h3>Result <small style="margin-left:12px">Offer vs today</small></h3>
+     <div class="seg"><i class="knob"></i><span class="sa">After tax</span><span class="sb">Before tax</span></div></div>
+   <div class="verdict"><span class="big">Break-even</span><span class="why"></span></div>
+   <div class="month"><i class="hl" style="inset:0;border-radius:12px"></i><b>Take-home up £408 a month</b><span>£3,816 today, £4,224 with the offer. Regular pay after tax, NI, student loan and your pension.</span></div>
+   <div class="scale" style="margin-bottom:22px"><div class="track"></div><div class="mk m1"><span>Break-even</span></div><div class="mk m2"><span>Consider</span></div><div class="mk m3"><span>Strong yes</span></div><div class="dot"></div></div>
+   <div class="res"><div>
+      <div class="kv k0"><span></span><b></b></div><div class="kv k1"><span></span><b></b></div><div class="kv k2"><span></span><b></b></div>
+      <div class="kv k3"><i class="hl" style="inset:2px 0;border-radius:8px"></i><span>Hourly rate, all in</span><b>£28.06 → £31.31</b></div>
+      <div class="kv k4"><span>Year one, with sign-on</span><b class="y1"></b></div>
+    </div><div class="need"><div class="ttl" style="margin-top:0">Base salary you need</div>
+      <div class="row th"><span>Line</span><span class="nl"></span><span>Base needed</span></div>
+      <div class="row n0"><span></span><span></span><span></span></div>
+      <div class="row n1"><i class="hl" style="inset:2px 0;border-radius:8px"></i><span></span><span></span><span></span></div>
+      <div class="row n2"><span></span><span></span><span></span></div>
+    </div></div>
+  </div>`;
+}
+function renderRes(root,t){
+  const g=sm((t-R.toGross)/.35)*(1-sm((t-R.toNet)/.35));       // 0 = after tax, 1 = before tax
+  const D=g>.5?GROSS:NET;
+  root.querySelector(".knob").style.left=`calc(4px + ${g}*(50% - 2px))`;
+  root.querySelector(".sa").style.color=g<.5?"var(--ink)":"var(--muted)";root.querySelector(".sb").style.color=g>=.5?"var(--ink)":"var(--muted)";
+  const v=root.querySelector(".verdict");v.style.opacity=fadeIn(t,R.verdict,.4);v.style.transform=`translateY(${(1-fadeIn(t,R.verdict,.4))*12}px)`;
+  root.querySelector(".why").textContent=`Only ${D.pct}% better${g>.5?"":" after tax"}. Move only for a clear career step.`;
+  const mo=root.querySelector(".month");mo.style.opacity=fadeIn(t,R.month,.4);mo.querySelector(".hl").style.opacity=hlOp(t,R.month,2.4);
+  // scale: positions interpolate between views
+  const lo=lerp(NET.cur*.85,GROSS.cur*.85,g), hi=lerp(Math.max(NET.str*1.08,NET.cur*1.3),Math.max(GROSS.str*1.08,GROSS.cur*1.3),g);
+  const pos=x=>clamp((x-lo)/(hi-lo)*100,0,100);
+  const cur=lerp(NET.cur,GROSS.cur,g),con=lerp(NET.con,GROSS.con,g),str=lerp(NET.str,GROSS.str,g),off=lerp(NET.off,GROSS.off,g);
+  root.querySelector(".m1").style.left=pos(cur)+"%";root.querySelector(".m2").style.left=pos(con)+"%";root.querySelector(".m3").style.left=pos(str)+"%";
+  const slide=sm((t-R.verdict-.2)/1.0);
+  const dot=root.querySelector(".dot");dot.style.left=lerp(0,pos(off),slide)+"%";dot.style.opacity=fadeIn(t,R.verdict,.3);
+  D.kv.forEach(([l,v],i)=>{const k=root.querySelector(".k"+i);k.children[0].textContent=l;k.children[1].textContent=v});
+  root.querySelector(".y1").textContent=D.yr1;
+  root.querySelector(".k3 .hl").style.opacity=hlOp(t,R.hourly,2.0);
+  root.querySelector(".nl").textContent=D.lab;
+  D.need.forEach((r,i)=>{const row=root.querySelector(".n"+i);[...row.querySelectorAll("span")].forEach((s,j)=>s.textContent=r[j])});
+  root.querySelector(".n1 .hl").style.opacity=hlOp(t,R.need,2.6);
+  root.querySelector(".res").style.opacity=fadeIn(t,R.verdict+.4,.5);
+}
+
+/* ---------- save and share ---------- */
+let SH={};
+function shareCard(){
+  return `<div class="card"><h3>Save and share <small>Your figures stay on your device</small></h3>
+   <div class="btns"><span class="btn">Clear all</span><span class="btn pri b1">Copy summary</span><span class="btn b2">Copy link</span><span class="toast"></span></div>
+   <div class="sumbox">Offer check
+Verdict: Break-even
+Today's value after tax: £59,717
+Offer value after tax: £62,809
+Difference: +£3,092 (5.2%)
+Monthly take-home: £3,816 today, £4,224 with the offer (+£408)
+Year one, with one-off payments: +£5,542
+
+Recruiter answers:
+[x] What is the salary band?
+    £78–88k</div>
+   <div class="linkchip"><div class="lk"><small>Link copied</small><code>offer-check.net/#s=v1.eyJjQmFzZSI6NzAwMDAs…</code></div></div>
+   <div class="linkchip lc2"><div class="banner"><span>You opened a shared comparison. Your own figures are kept aside.</span><span class="btn">Restore my figures</span></div></div>
+  </div>`;
+}
+function renderShare(root,t){
+  const b1=root.querySelector(".b1"),b2=root.querySelector(".b2"),toast=root.querySelector(".toast");
+  b1.style.transform=`scale(${1-.05*hlOp(t,SH.sum,.15)})`;
+  const sb=root.querySelector(".sumbox");sb.style.opacity=fadeIn(t,SH.sum+.15,.4);
+  const armed=t>=SH.arm&&t<SH.link;
+  b2.textContent=armed?"Includes your salary figures. Copy?":"Copy link";
+  b2.style.borderColor=armed?"var(--accent)":"var(--line)";
+  toast.textContent=t>=SH.link?"Link copied. Your notes aren't included.":t>=SH.sum+.15?"Summary copied":"";
+  const lk=root.querySelector(".linkchip");lk.style.opacity=fadeIn(t,SH.link,.4);
+  const lc2=root.querySelector(".lc2");lc2.style.opacity=fadeIn(t,SH.banner,.4);
+  sb.style.opacity=fadeIn(t,SH.sum+.15,.4)*(1-.55*sm((t-SH.link)/.4));
+}
+
+/* ---------- build + timeline ---------- */
+function init(timings){
+  T=timings;CUES=T.cues;DUR=T.duration;
+  const order=["title","s1","s2","s3","s4","s5","s6","end"];
+  order.forEach((s,i)=>{const cs=sceneCues(s);const st=i===0?0:cs[0].start-.45;SC[s]=[st,null]});
+  order.forEach((s,i)=>SC[s][1]=i<order.length-1?SC[order[i+1]][0]:DUR+1);
+
+  $("#sc-s1").innerHTML=left("STEP 1","Your current package","Work down the left column, top to bottom.",0)+'<div class="cw">'+payCard()+'</div>';
+  $("#sc-s2").innerHTML=left("STEP 2","Ask the recruiter","Eighteen questions. Note every answer before you touch the offer.",1)+'<div class="cw">'+qCard()+'</div>';
+  $("#sc-s3").innerHTML=left("STEP 3","Fill in the offer","Same order, using their answers. Count only the bonus you can rely on.",2)+'<div class="cw">'+payCard()+'</div>';
+  $("#sc-s4").innerHTML=left("STEP 4","Set your decision lines","How much better it must be before moving is worth it.",3)+'<div class="cw">'+setCard()+'</div>';
+  $("#sc-s5").innerHTML=left("STEP 5","Read the verdict","And the base salary to ask for.",4)+'<div class="cw">'+resCard()+'</div>';
+  $("#sc-s6").innerHTML=left("THEN","Save and share","Keep your numbers together, or open them on another device.",5)+'<div class="cw">'+shareCard()+'</div>';
+
+  // cue indices by scene, in order
+  const ix=s=>CUES.filter(c=>c.scene===s).map(c=>c.i);
+  const s1=ix("s1"),s2=ix("s2"),s3=ix("s3"),s4=ix("s4"),s5=ix("s5"),s6=ix("s6");
+  // step 1: today's column
+  Object.assign(EV,{"c.base":at(s1[1],.05),"c.pen":at(s1[1],.4),"c.bon":at(s1[1],.75),"c.rel":at(s1[2],.3),
+    "c.allow":at(s1[3],.2),"c.med":at(s1[3],.4),"c.hol":at(s1[3],.6),"c.wk":at(s1[3],.85),"c.com":at(s1[4],.25),"c.hrs":at(s1[4],.75)});
+  PEN_OPEN=at(s1[5],0);
+  Object.assign(EV,{"c.ee":at(s1[5],.35),"c.match":at(s1[5],.55),"c.sac":at(s1[5],.85)});
+  FOOT_C=C(s1[5]).end+.15;
+  // step 2: ticks
+  const tick=(qs,i0,f0,f1)=>qs.forEach((q,k)=>QT[q]=at(i0,f0+(f1-f0)*k/Math.max(1,qs.length-1)));
+  tick([0,1,2],s2[0],.35,.95);
+  tick([6,7,8,10],s2[1],.05,.4);
+  tick([12,15,17],s2[1],.55,.95);
+  BAND_HL=at(s2[2],.05);
+  // step 3: offer column
+  Object.assign(EV,{"o.base":at(s3[0],.62),"o.pen":at(s3[0],.92),"o.match":at(s3[1],.2),"o.ee":at(s3[1],.45),"o.sac":at(s3[1],.85),
+    "o.bon":at(s3[2],.12),"o.rel":at(s3[2],.62),
+    "o.allow":at(s3[2],.78),"o.med":at(s3[2],.84),"o.hol":at(s3[2],.9),"o.wk":at(s3[2],.96),"o.com":C(s3[2]).end+.08,"o.hrs":C(s3[2]).end+.2});
+  ONE_OPEN=at(s3[3],.05);EV["o.one"]=at(s3[3],.25);EV["c.one"]=at(s3[3],.25);
+  FOOT_O=at(s3[3],.95);
+  // step 4
+  SET={con:at(s4[0],.42),str:at(s4[0],.55),scale:at(s4[0],.6),tax:at(s4[1],.3),loan:at(s4[1],.75),pg:at(s4[1],.85),time:at(s4[1],.9)};
+  // step 5
+  R={verdict:at(s5[0],.05),toGross:at(s5[1],.02),toNet:at(s5[1],.62),month:at(s5[2],.02),hourly:at(s5[2],.55),need:at(s5[3],.35)};
+  // step 6
+  SH={sum:at(s6[0],.05),arm:at(s6[1],.02),link:at(s6[1],.3),banner:at(s6[1],.6)};
+}
+
+function render(t){
+  // scenes crossfade
+  for(const [s,[a,b]] of Object.entries(SC)){
+    // fade out over the last 0.3 s of a scene, then the next fades in: never two layouts at once
+    const o=Math.min(a===0?1:sm((t-a-.05)/.35),1-sm((t-(b-.3))/.3));
+    const e=$("#sc-"+s);e.style.opacity=o;e.style.visibility=o<.001?"hidden":"visible";
+    const c=e.querySelector(".card");if(c)c.style.transform=`translateY(${(1-sm((t-a)/.6))*18}px)`;
+  }
+  renderPay($("#sc-s1"),t);renderPay($("#sc-s3"),t);renderQ($("#sc-s2"),t);renderSet($("#sc-s4"),t);renderRes($("#sc-s5"),t);renderShare($("#sc-s6"),t);
+  // caption: latest cue that has started, held until the next one
+  let cur=null;for(const c of CUES)if(t>=c.start-.05)cur=c;
+  const cap=$("#cap");
+  if(cur){const next=CUES[cur.i+1],stop=next?Math.max(cur.end+.35,Math.min(next.start-.05,cur.end+.9)):cur.end+1.2;
+    cap.textContent=cur.caption;cap.style.opacity=Math.min(fadeIn(t,cur.start-.05,.15),1-sm((t-stop)/.2))}
+  else cap.style.opacity=0;
+  $("#prog").style.width=(clamp(t/DUR,0,1)*1920)+"px";
+}
+window.init=init;window.render=render;
+</script>
+</body>
+</html>
