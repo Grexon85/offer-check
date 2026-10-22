@@ -1,0 +1,61 @@
+{
+  "voice": "bf_emma",
+  "speed": 1.0,
+  "gap": 0.45,
+  "sceneGap": 0.7,
+  "cues": [
+    {"scene": "title", "caption": "Offer Check tells you if a job offer really beats what you have now. Here's how to fill it in.",
+     "say": "Offer Check tells you if a job offer really beats what you have now. Here's how to fill it in."},
+
+    {"scene": "s1", "caption": "Step one: your current package, top to bottom.",
+     "say": "Step one: your current package, top to bottom."},
+    {"scene": "s1", "caption": "Base salary, employer pension, and your typical bonus.",
+     "say": "Base salary, employer pension, and your typical bonus."},
+    {"scene": "s1", "caption": "How much of that bonus you can rely on.",
+     "say": "How much of that bonus you can rely on."},
+    {"scene": "s1", "caption": "Then allowances, medical, holiday, and your working week.",
+     "say": "Then allowances, medical, holiday, and your working week."},
+    {"scene": "s1", "caption": "Your commute: cost and hours.",
+     "say": "Your commute: cost, and hours."},
+    {"scene": "s1", "caption": "Open the pension section to add what you pay in, any matching, and whether it's salary sacrifice.",
+     "say": "Open the pension section to add what you pay in, any matching, and whether it's salary sacrifice."},
+
+    {"scene": "s2", "caption": "Step two: ask the recruiter these questions, and note the answers.",
+     "say": "Step two: ask the recruiter these questions, and note the answers."},
+    {"scene": "s2", "caption": "There are 18, from the salary band to probation, parental leave and sign-on bonuses.",
+     "say": "There are eighteen, from the salary band to probation, parental leave, and sign-on bonuses."},
+    {"scene": "s2", "caption": "Get their salary band before you name a number.",
+     "say": "Get their salary band before you name a number."},
+
+    {"scene": "s3", "caption": "Step three: fill in the offer, in the same order. £82,000 base, and a 3% pension.",
+     "say": "Step three: fill in the offer, in the same order. Eighty-two thousand pounds base, and a three percent pension."},
+    {"scene": "s3", "caption": "They'll match another 3% if you pay in. But it isn't salary sacrifice.",
+     "say": "They'll match another three percent if you pay in. But it isn't salary sacrifice."},
+    {"scene": "s3", "caption": "If the bonus is only a target, count half of it.",
+     "say": "If the bonus is only a target, count half of it."},
+    {"scene": "s3", "caption": "A sign-on bonus goes under one-off payments. It counts in year one, not in the verdict.",
+     "say": "A sign-on bonus goes under one-off payments. It counts in year one, not in the verdict."},
+
+    {"scene": "s4", "caption": "Step four: set your decision lines. 10% and 20% are good defaults. Raise them for riskier roles.",
+     "say": "Step four: set your decision lines. Ten and twenty percent are good defaults. Raise them for riskier roles."},
+    {"scene": "s4", "caption": "Then add where you pay tax, and your student loan plan.",
+     "say": "Then add where you pay tax, and your student loan plan."},
+
+    {"scene": "s5", "caption": "The verdict: break-even. After tax, the offer is only 5% better.",
+     "say": "The verdict: break-even. After tax, the offer is only five percent better."},
+    {"scene": "s5", "caption": "Before tax, it looked like 9%. You'd lose salary sacrifice and four points of pension, and both are worth more than they seem.",
+     "say": "Before tax, it looked like nine percent. You'd lose salary sacrifice, and four points of pension, and both are worth more than they seem."},
+    {"scene": "s5", "caption": "Your take-home still rises by £408 a month, and your hourly rate, counting the commute, goes from £28 to £31.",
+     "say": "Your take-home still rises by four hundred and eight pounds a month, and your hourly rate, counting the commute, goes from twenty-eight pounds to thirty-one."},
+    {"scene": "s5", "caption": "To reach Consider, ask for a base of about £86,900.",
+     "say": "To reach Consider, ask for a base of about eighty-six thousand, nine hundred pounds."},
+
+    {"scene": "s6", "caption": "Copy summary keeps your numbers and the recruiter's answers together.",
+     "say": "Copy summary keeps your numbers and the recruiter's answers together."},
+    {"scene": "s6", "caption": "Copy link opens your comparison on another device, without your notes.",
+     "say": "Copy link opens your comparison on another device, without your notes."},
+
+    {"scene": "end", "caption": "Offer Check. Know your numbers before you say yes.",
+     "say": "Offer Check. Know your numbers before you say yes."}
+  ]
+}
